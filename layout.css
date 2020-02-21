@@ -1,0 +1,305 @@
+@charset "utf-8";
+html {
+	height: 100%;
+	margin: 0px;
+}
+
+body {
+	background-image: url("website background.png"), url("tilex.png"), url("tiley.png");
+	background-repeat: no-repeat, repeat-x, repeat;
+	background-position: right, left, bottom;
+	height: 100%;
+	margin: 0px;
+}
+
+.logo {
+	display: flex;
+    width: 25%;
+	margin-left: auto;
+    margin-right: auto;
+}
+
+.logo img {
+    position: relative;
+	width: 100%;
+	height: auto;
+}
+
+.UI {
+	position: relative;
+	height: 100%;
+	width: 100%;
+}
+
+.navbar {
+ 	background-color: #000;
+ 	overflow: hidden;
+	opacity: 0.8;
+	text-align: center;
+	display: flex;
+	position: relative;
+	height: 75px;
+	width: 100%;
+	box-shadow:  0 0 100px  rgba(0,0,0,1);
+}
+
+.navbar button {
+	display: block;
+	opacity: 0.8;
+	background-color: #000;
+	color: white;
+	border: 0px solid white;
+	text-decoration: none;
+	font-size: 42px;
+}
+
+#leftScroll {
+	background: rgba(0,0,0,0.8);
+	position: absolute;
+	display: block;
+	z-index: 2;
+	float: left;
+	width: 12.5%;
+    height: 100%;
+	text-align: left;
+}
+
+#leftScroll:hover {
+	color: rgba(255,255,255,0.3);
+}
+
+#rightScroll {
+	background: rgba(0,0,0,0.8);
+	position: absolute;
+	display: block;
+	width: 12.5%;
+	right: 0;
+	z-index: 2;
+	float: right;
+	text-align: right;
+    height: 100%;
+}
+
+#rightScroll:hover {
+	color: rgba(255,255,255,0.3);
+}
+
+.scrollContainer {
+	position: absolute;
+	width: 86%;
+	left: 6%;
+	z-index: -1;
+	display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+	overflow-y: hidden;
+	margin-bottom: -16px;
+	-webkit-overflow-scrolling: touch;
+	border-style: none solid;
+    border-color: rgba(255,255,255,1);
+	border-width: 4px;
+	border-radius: 4px;
+}
+
+.scrollContainer::-webkit-scrollbar { width: 0 }
+
+
+.scrollContainer button:hover {
+	opacity: .3;
+	background-color: #1A1A1A;
+	color: white;
+}
+
+.buttonContainer {
+	position: relative;
+	width: 100%;
+	display: flex;
+	flex-wrap: nowrap;
+	z-index: -1;
+	-webkit-overflow-scrolling: touch;
+}
+
+.buttonContainer button {
+	border-style: none double;
+    border-color: rgba(255,255,255,1);
+	border-width: 2px;
+	border-radius: 4px;
+	float: left;
+	text-align: center;
+	box-sizing: border-box;
+	padding: 14px 8%;
+    transition: 0.3s;
+	opacity: .8;
+	cursor: pointer;
+}
+
+.buttonContainer::-webkit-scrollbar { width: 0 }
+
+.photoButton, .musicButton, .clothesButton {
+	text-decoration: none;
+	width: 400px;
+	text-align: center;
+}
+
+.sidePanel {
+	display: none;
+	align: left;
+	float: left;
+	font-size: 32px;
+	opacity: 0.8;
+	z-index: 2;
+	border-style: none solid none none;
+	border-radius: 0px 15px 15px 0px;
+	border-color: rgba(255,255,255,0.80);
+	border-width: 3px;
+	position: relative;
+	marigin: 0;
+	height: 100%;
+	width: 34.5%;
+	background-color: #000000;
+	box-shadow:  0 0 100px  rgba(0,0,0,1);
+}
+
+.sidePanel ul {
+	color: rgba(100,100,100,1);
+	border-style: single;
+	list-style-type: none;
+	line-height: 200%;
+	margin-top: 10px;
+}
+
+.sidePanel li {
+	marigin: 10px 0px;
+}
+
+.sidePanel li:hover {
+	color: rgba(30,30,30,0.5);
+}
+
+.sidePanel li.active {
+	list-style-type: circle;
+}
+
+.sidePanel a:link {
+	color: rgba(200,200,200,1);
+}
+
+.sidePanel a:active {
+	color: rgba(100,100,100,1);
+}
+
+.sidePanel a:visited {
+	color: rgba(200,200,200,1);
+}
+
+.sidePanel a:hover {
+	color: rgba(30,30,30,0.5);
+	list-style-type: none;
+}
+
+.content {
+	position: absolute;
+	float: right;
+	width: 60%;
+	height: auto;
+	top: 95px;
+	left: 36%;
+	display: none;
+}
+
+#aboutContainer {
+	position: absolute;
+	width: 88%;
+	height: 1000px;
+	top: 125px;
+	margin: 0px 6%;
+	left: auto;
+}
+
+#musicContainer iframe {
+	background-color: rgba(0,0,0,0);
+	opacity: 0.8;
+}
+
+.thumbnail {
+	position: relative;
+	width: 33%;
+    height: 150%;
+	z-index: 0;
+    overflow: hidden;
+	float: left;
+}
+
+.thumbnail img {
+	max-width: 100%;
+	height: auto;
+}
+
+.border {
+	position: absolute;
+	max-width: 100%;
+	height: auto;
+	border-style: double;
+	border-width: 5px;
+}
+
+.textwrapper {
+	position: relative;
+	left: 40px;
+}
+
+.textwrapper {
+	font-size: 24px;
+	text-align: justify;
+	color: rgba(255,255,255,.9);
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.textwrapper h1 {
+	text-align: center;
+}
+
+.textwrapper p {
+	margin: 0px;
+	text-indent: 40px;
+}
+
+.section {
+	display: none;
+	width: 100%;
+	height: 100%;
+	margin: 0px;
+}
+
+#about {
+	display: inline-block;
+}
+
+#singles {
+	display: inline-block;
+}
+
+#santapics {
+	display: inline-block;
+}
+
+.cumming {
+	position: absolute;
+	width: 100%;
+	padding: 20% 0;
+	text-align: center;
+	font-size: 100px;
+	color: rgba(255,255,255,1);
+	text-shadow: 5px 10px 18px black;
+}
+
+.pic1 {
+	top: 10px;
+	position: relative;
+	text-align: center;
+}
+
+.pic1 img {
+	height: auto;
+	width: 60%;
+}

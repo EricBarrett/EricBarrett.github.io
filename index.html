@@ -1,0 +1,372 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Home</title>
+	<link href="layout.css" rel="stylesheet" type="text/css">
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script type="text/javascript">
+    var scrolling = null;
+	var stopping = null;
+	var leftDist = 10;
+	var rightDist = 10;
+	var speed = 3;
+	var delay = 100;
+	var move = false;
+	
+	function snap_to(left) {
+		var navbar = document.getElementById('scroller');
+		const buttonWidth = document.getElementById('first').offsetWidth;
+		var currentButton = Math.floor(navbar.scrollLeft / buttonWidth) + 1;
+		var time = 500;
+		window.clearTimeout(scrolling);
+		var currentPos = navbar.scrollLeft;
+		
+		if (left) {
+			// reset the speed in the other direction
+			rightDist = 10;
+			if (currentButton !== 1) {
+				var buttonType = (currentButton) % 3;
+				switch (buttonType) {
+					case 1:
+						var link = document.getElementById("photosnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
+						break;
+					case 2:
+						var link = document.getElementById("musicnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
+						break;
+					case 0:
+						var link = document.getElementById("clothesnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
+						break;
+				}
+			}
+			else {
+				var link = document.getElementById("photosnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
+			}
+			var finalPos = currentButton * buttonWidth - buttonWidth;
+			var numIntervals = Math.ceil((currentPos - finalPos) / leftDist);
+			var intervalTime = time/numIntervals;
+			window.clearTimeout(scrolling);
+			window.clearInterval(stopping);
+			snapping = window.setInterval(function() {
+				navbar.scrollLeft = navbar.scrollLeft - leftDist;
+			}, intervalTime);
+			delay = 1000;
+			window.setTimeout(function() {
+				window.clearInterval(snapping);
+				window.setTimeout(function() {
+					delay = 100;
+					leftDist = 10;
+					if (move && rightDist == 10) {scroll_left();}
+				}, 1000);
+			}, time);
+		}
+		else {
+			leftDist = 10;
+			var buttonType = (currentButton + 1) % 3;
+				switch (buttonType) {
+					case 1:
+						var link = document.getElementById("photosnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
+						break;
+					case 2:
+						var link = document.getElementById("musicnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
+						break;
+					case 0:
+						var link = document.getElementById("clothesnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
+						break;
+				}
+			var finalPos = currentButton * buttonWidth;
+			var numIntervals = Math.ceil((finalPos -  currentPos) / rightDist);
+			var intervalTime = time/numIntervals;
+			window.clearTimeout(scrolling);
+			window.clearInterval(stopping);
+			snapping = window.setInterval(function() {
+				navbar.scrollLeft = navbar.scrollLeft + rightDist;
+			}, intervalTime);
+			delay = 1000;
+			window.setTimeout(function() {
+				window.clearInterval(snapping);
+				window.setTimeout(function() {
+					delay = 100;
+					rightDist = 10;
+					if (move && leftDist == 10) {scroll_right();}
+				}, 1000);
+			}, time)
+		}
+	}
+ 
+    function scroll_left() {
+		var navbar = document.getElementById('scroller');
+		move = true;
+		
+		if (stopping) {
+			window.clearInterval(scrolling);
+			window.clearTimeout(stopping);
+			leftDist = 10;
+			rightDist = 10;
+			speed = 3;
+			stopping = null;
+		} 
+		
+		navbar.scrollLeft = navbar.scrollLeft - leftDist;
+		
+		if (navbar.scrollLeft < 10) {
+			navbar.scrollLeft = 4700;
+		}
+ 
+        scrolling = window.setTimeout(function() {
+			scroll_left();
+			leftDist += speed;
+        }, delay);	
+    }
+ 
+    function scroll_right() {
+		var navbar = document.getElementById('scroller');
+		var buttonWidth = document.getElementById('first').offsetWidth;
+		move = true;
+		
+		if (stopping) {
+			window.clearInterval(scrolling);
+			window.clearTimeout(stopping);
+			leftDist = 10;
+			rightDist = 10;
+			speed = 3;
+			stopping = null;
+		} 
+ 		
+		navbar.scrollLeft = navbar.scrollLeft + rightDist;
+		if (navbar.scrollLeft > (buttonWidth * 6 - 100)) {
+			navbar.scrollLeft = 0;
+		}
+ 
+        scrolling = window.setTimeout(function() {
+            scroll_right();
+			rightDist += speed;
+        }, delay);
+    }
+ 
+    function stop_scroll() {
+		var navbar = document.getElementById('scroller');
+		move = false;
+		
+		window.clearTimeout(scrolling);
+		delay = 100;
+		
+		if (leftDist > rightDist) {
+			var time = Math.floor(leftDist/speed) * 100 + 100
+			
+			navbar.scrollLeft = navbar.scrollLeft - leftDist;
+			
+			scrolling = window.setInterval(function() {
+				navbar = document.getElementById('scroller');
+				navbar.scrollLeft = navbar.scrollLeft - leftDist;
+				leftDist -= speed;
+				if (navbar.scrollLeft < 10) {
+					navbar.scrollLeft = 4700;
+				}
+			}, delay);
+			
+			stopping = window.setTimeout(function() {
+				window.clearInterval(scrolling);
+				leftDist = 10;
+				rightDist = 10;
+				speed = 3;
+			}, time)
+		}
+		
+		else if (rightDist > leftDist) {
+			var time = Math.floor(rightDist/speed) * 100 + 100
+			var buttonWidth = document.getElementById('first').offsetWidth;
+			
+			navbar.scrollLeft = navbar.scrollLeft + rightDist;
+			
+			scrolling = window.setInterval(function() {
+				navbar = document.getElementById('scroller');
+				navbar.scrollLeft = navbar.scrollLeft + rightDist;
+				rightDist -= speed;
+				if (navbar.scrollLeft > (buttonWidth * 6 - 100)) {
+					navbar.scrollLeft = 0;
+				}
+			}, 100);
+			
+			stopping = window.setTimeout(function() {
+				window.clearInterval(scrolling);
+				leftDist = 10;
+				rightDist = 10;
+				speed = 3;
+			}, time)
+		}
+    }
+    </script>
+</head>	
+<body>
+	<header>
+		<div class="logo"><a href="#about"><img src="logo.png" alt="logo" title="about"/></a></div>
+	</header>
+	<br>
+	<div class="UI">
+		<div class="navbar">
+			<button type="button" onmouseover="scroll_left();" onmouseout="stop_scroll();" onClick="snap_to(true);" id="leftScroll">&lt;</button>
+			<div class="scrollContainer" id="scroller">
+				<div class="buttonContainer">
+					<button type="button" id="first"><div class="photoButton">Photography</div></button>
+					<button type="button"><div class="musicButton">Music</div></button>
+					<button type="button"><div class="clothesButton">Apparel</div></button>
+					<button type="button" id="start"><div class="photoButton">Photography</div></button>
+					<button type="button"><div class="musicButton">Music</div></button>
+					<button type="button"><div class="clothesButton">Apparel</div></button>
+					<button type="button"><div class="photoButton">Photography</div></button>
+					<button type="button"><div class="musicButton">Music</div></button>
+					<button type="button" id="last"><div class="clothesButton">Apparel</div></button>
+				</div>
+			</div>
+			<button type="button" onmouseover="scroll_right();" onmouseout="stop_scroll();" onClick="snap_to(false);" id="rightScroll">&gt;</button>
+		</div>
+		<div class="sidePanel" id="photosnav">
+				<ul>
+				<li class="active"><a href="#santaphotos">Christmas @ the Sheraton Hotel</a></li>
+				<li><a href="#nationalpark">Gros Morne</a></li>
+				</ul>
+		</div>
+		<div class="sidePanel" id="musicnav">
+				<ul>
+				<li class="active"><a href="#albumsingles">Instrumentals</a></li>
+				<li><a href="#album1">Hear me?</a></li>
+				</ul>
+		</div>
+		<div class="sidePanel" id="clothesnav">
+				<ul>
+				<li class="active"><a href="#alone">"Alone" collection</a></li>
+				</ul>
+		</div>
+		<div class="content" id="aboutContainer" data-inview="in">
+		<div class="section" id="about">
+			<a name="about">
+			<div class="thumbnail"><div class="border"><img src="Selfie1.jpg" alt="Me with the young boy Franklin"/></div></div>
+			<div class="textwrapper">
+				<p>Eric Barrett is an artist from the island of Newfoundland. He talks to himself a lot but if you tell him that he’ll claim it’s thinking out loud. He’ll also say he doesn’t snore, which is also a blatant lie. He failed out of computer engineering to pursue his dream of creating stuff. Since he was a kid he has wanted to develop video games and so he is working on an album and a clothing line coming soon. Obviously he is also a very talented web designer, and he’s not that bad with a camera either. If you want to hire him for anything (I’ll even shovel for $$) contact him at: neverloiter@gmail.com. </p>
+				<h1>What does this site offer?</h1>
+				<p>Currently there are some pretty pictures, ametaur music, and some beautiful coming soon text. But in the future I want to bring so much more. I’ve always felt like I never really had a way to express myself, and recently I have failed out of computer engineering. The lead up to that moment was a pretty dark arc of my life: I had my heart broken for the first time, I lost most of my friends, and school consumed my life, yet I wasn’t getting good enough grades. My mother was going through a messy breakup with her stalking ex, and I lost both my grandparents. But nevertheless these moments helped me develop perspective. It helped me realize that I need to share my message and go after my dreams. <p><strong>Life is short</strong> and I don’t want No Loitering to be a <u>regret</u>, or a <u>what if</u>. So I saved up the money I earned from all my intern work and went all in. Further down the road <strong>I want to do cool stuff</strong> like develop <u>a video game</u>, release <u>a DnD setting</u>, design <u>clothes</u>, release <u>an album</u>, and get into <u>comedy and film/acting.</u></p></p>
+				<h1>What is No Loitering?</h1>
+				<p>No Loitering is a brand that supplies the world with neat shit. A project started by my friend and I, our goal is to do what we enjoy and share it with the world. Focusing mainly on art  No Loitering is an outlet for music, fashion, videos, and more. We are only starting yet, and have a lot more planned. If you are interested please stay tuned with us as we grow.</p><div class="pic1"><img src="origin.jpg" alt="2 kids and a dream"/></div>
+			</div>
+			</a>
+		</div>
+	</div>
+	<div class="content" id="photosContainer" data-inview="out">
+		<div class="section" id="santapics">
+			<a name="santaphotos" target="_top">
+			<div class="lr_embed" style="position: relative; padding-bottom: 50%; height: 0; overflow: hidden;">
+				<iframe id="iframe" src="https://lightroom.adobe.com/embed/shares/43248dbd380e4e8a939ca1b78ae14100/slideshow?background_color=%232D2D2D&color=%23999999" frameborder="0" style="width:100%; height:100%; position: absolute; top:0; left:0;"></iframe>
+			</div>
+			</a>
+		</div>
+		<div class="section" id="trailpics">
+			<a name="nationalpark" target="_top">
+			<div class="cumming"><marquee scrolldelay="60" scrollamount="12">Coming Soon</marquee></div>
+			</a>
+		</div>
+	</div>
+	<div class="content" id="musicContainer" data-inview="out">
+		<div class="section" id="singles">
+		<a name="albumsingles" target="_top">
+			<h1>Instrumentals</h1>
+			<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/715495021&color=%23514c49&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+			<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/727314115&color=%23514c49&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+		</a>
+		</div>
+		<div class="section" id="album">
+		<a name="album1" target="_top">
+			<div class="cumming"><marquee scrolldelay="60" scrollamount="12">Coming Soon</marquee></div>
+		</a>
+		</div>
+	</div>
+	<div class="content" id="clothesContainer">
+		<div class="section" id="store">
+			<a name="alone" target="_top">
+				<div class="cumming"><marquee scrolldelay="60" scrollamount="12">Coming Soon</marquee></div>
+				</a>
+		</div>
+	</div>
+</div>
+	
+<script type="text/javascript">
+$("document").ready(function scroll_to() {
+	var $scroller = $('#scroller');
+	var $scrollButtons = $('.buttonContainer').children('button');
+	// scroll to middle of scroller and fade in content
+	// $scroller.scrollLeft($("#start").position().left);
+	$scroller.animate({'scrollLeft': $("#start").position().left}, 1000);
+	$("#aboutContainer").fadeIn(1000);
+    // assign click handler
+    $scrollButtons.on('click', function () {
+        var scrollTo = $(this).position().left;
+		var scrollType = $(this).children("div");
+        $scroller.animate({'scrollLeft': scrollTo}, 750);
+		// $(".content").fadeOut(750);
+		// $(".sidePanel").css({display: "none"})
+		if (scrollType.hasClass("photoButton")) {
+			$("#photosnav").children("ul").children("li.active").children("a")[0].click();
+			//$("#photosnav").slideDown(1500);
+			//$("#photosContainer").fadeIn(1500);
+			//$("#photosnav").css({display: "flex"});
+		}
+		if (scrollType.hasClass("musicButton")) {
+			$("#musicnav").children("ul").children("li.active").children("a")[0].click();
+			//$("#musicnav").slideDown(1500);
+			//$("#musicContainer").fadeIn(1500);
+			//$("#musicnav").css({display: "flex"});
+		}
+		if (scrollType.hasClass("clothesButton")) {
+			$("#clothesnav").children("ul").children("li.active").children("a")[0].click();
+			//$("#clothesnav").slideDown(1500);
+			//$("#clothesContainer").fadeIn(1500);
+			//$("#clothesnav").css({display: "flex"});
+		}
+		});
+	});
+	
+$("document").ready(function navigate() {
+	$("body")[0].onhashchange = function() {
+		var anchorpoint = location.hash.slice(1)
+		var currcontent = $("div[data-inview='in']");
+		var currcontentLinks = currcontent.find("a");
+		var inside = false;
+		var nextSection = $("a[name=" + anchorpoint + "]").parent();
+		var nextSidepanel = $("a[href='" + location.hash + "']").parent().parent().parent();
+		
+		if (anchorpoint !== "about") {
+			nextSidepanel.find("li.active").removeClass("active");
+			$("a[href='" + location.hash + "']").parent().addClass("active");
+		}
+		
+		// check to see if section is in displayed container
+		currcontentLinks.each(function(index, value){
+  			if (this.name == anchorpoint) {
+				inside = true;
+				return $("this").parent();
+  			};
+		});
+		if (inside !== true) {
+			$(".content").fadeOut(750);
+			nextSection.parent().attr("data-inview", "in")
+			currcontent.attr("data-inview", "out")
+			if (anchorpoint !== "about") {
+				$(".sidePanel").css({display: "none"})
+				nextSidepanel.slideDown(1500);
+				nextSidepanel.css({display: "flex"});
+			}
+			else {
+				$(".sidePanel").slideUp(1000);
+			}
+			nextSection.parent().fadeIn(750);
+		}
+		else {
+			$(".section").fadeOut(1);
+		}
+		nextSection.fadeIn(750);
+	};
+});
+</script>
+</body>
+</html>
