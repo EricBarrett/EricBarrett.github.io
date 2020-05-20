@@ -1,0 +1,209 @@
+@charset "utf-8";
+html {
+	height: 100%;
+	margin: 0px;
+}
+
+body {
+	background-image: url("website background.png"), url("tilex.png"), url("tiley.png");
+	background-repeat: no-repeat, repeat-x, repeat;
+	background-position: right, left, bottom;
+	height: 100%;
+	margin: 0px;
+}
+
+.logo {
+	display: flex;
+    width: 25%;
+	margin-left: auto;
+    margin-right: auto;
+}
+
+.logo img {
+    position: relative;
+	width: 100%;
+	height: auto;
+}
+
+.UI {
+	position: relative;
+	height: 100%;
+	width: 100%;
+}
+
+.navbar {
+ 	background-color: #000;
+ 	overflow: hidden;
+	opacity: 0.8;
+	text-align: center;
+	display: flex;
+	position: relative;
+	height: 75px;
+	width: 100%;
+	box-shadow:  0 0 100px  rgba(0,0,0,1);
+}
+
+.navbar button {
+	display: block;
+	opacity: 0.8;
+	background-color: #000;
+	color: white;
+	border: 0px solid white;
+	text-decoration: none;
+	font-size: 42px;
+}
+
+.buttonContainer {
+	position: relative;
+	width: 100%;
+	display: flex;
+	flex-wrap: nowrap;
+	z-index: -1;
+	-webkit-overflow-scrolling: touch;
+}
+
+.buttonContainer button {
+	border-style: none double;
+    border-color: rgba(255,255,255,1);
+	border-width: 2px;
+	border-radius: 4px;
+	float: left;
+	text-align: center;
+	box-sizing: border-box;
+	padding: 14px 8%;
+	width: 34%;
+    transition: 0.3s;
+	opacity: .8;
+	cursor: pointer;
+}
+
+.buttonContainer button:hover {
+	opacity: .3 !important;
+	background-color: #1A1A1A !important;
+	color: white !important;
+}
+
+.buttonContainer::-webkit-scrollbar { width: 0 }
+
+.photoButton, .musicButton, .clothesButton {
+	text-decoration: none;
+	text-align: center;
+}
+
+.scrollContainer {
+	display: flex;
+	flex-flow: column wrap;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 95px;
+}
+
+.content {
+	position: relative;
+	width: 88%;
+	height: 100%;
+	left: auto;
+	float: left;
+	margin: 15px 6%;
+}
+
+#aboutContainer {
+	position: absolute;
+	width: 88%;
+	height: 1000px;
+	top: 125px;
+	margin: 0px 6%;
+	left: auto;
+	display: none;
+}
+
+#musicContainer iframe {
+	background-color: rgba(0,0,0,0);
+	opacity: 0.8;
+}
+
+.thumbnail {
+	position: relative;
+	width: 33%;
+    height: 150%;
+	z-index: 0;
+    overflow: hidden;
+	float: left;
+}
+
+.thumbnail img {
+	max-width: 100%;
+	height: auto;
+}
+
+.border {
+	position: absolute;
+	max-width: 100%;
+	height: auto;
+	border-style: double;
+	border-width: 5px;
+}
+
+.textwrapper {
+	position: relative;
+	left: 40px;
+}
+
+.textwrapper {
+	font-size: 24px;
+	text-align: justify;
+	color: rgba(255,255,255,.9);
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.textwrapper h1 {
+	text-align: center;
+}
+
+.textwrapper p {
+	margin: 0px;
+	text-indent: 40px;
+}
+
+.section {
+	display: none;
+	width: 100%;
+	height: 100%;
+	margin: 0px;
+}
+
+#about {
+	display: inline-block;
+}
+
+#singles {
+	display: inline-block;
+}
+
+#santapics {
+	display: inline-block;
+}
+
+.cumming {
+	position: absolute;
+	width: 100%;
+	padding: 20% 0;
+	text-align: center;
+	font-size: 100px;
+	color: rgba(255,255,255,1);
+	text-shadow: 5px 10px 18px black;
+}
+
+.pic1 {
+	top: 10px;
+	position: relative;
+	text-align: center;
+}
+
+.pic1 img {
+	height: auto;
+	width: 60%;
+}
