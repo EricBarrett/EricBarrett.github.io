@@ -9,195 +9,339 @@
 	<script type="text/javascript">
     var scrolling = null;
 	var stopping = null;
+	var snapping = null;
 	var leftDist = 10;
 	var rightDist = 10;
 	var speed = 3;
 	var delay = 100;
-	var move = false;
+	var move_right = false;
+	var move_left = false;
+	var buttonNum = 4;
+		
+	function snap_to(nearest = 0, reveal = true) {		
+		if (nearest < 0) {
+			snap_left(reveal);
+		}
+		else if(nearest > 0){
+			snap_right(reveal);
+		}
+		else {
+			var navbar = document.getElementById('scroller');
+			const buttonWidth = document.getElementById('first').offsetWidth;
+			var currentPos = navbar.scrollLeft;
+			
+			if (currentPos < buttonWidth) {
+				snap_right(reveal);
+			}
+			else {
+				var leftButton = buttonWidth * Math.floor(currentPos/buttonWidth);
+				var rightButton = buttonWidth * Math.ceil(currentPos/buttonWidth);
+				if ((currentPos - leftButton) < (rightButton - currentPos)) {
+					snap_left(reveal);
+				}
+				else {
+					snap_right(reveal);
+				}
+			}
+		}
+	}
 	
-	function snap_to(left) {
+	function snap_right(reveal = true) {
+		// reset the speed in the other direction
+		window.clearInterval(scrolling);
+		window.clearTimeout(stopping);
+		leftDist = 10;
+		
 		var navbar = document.getElementById('scroller');
 		const buttonWidth = document.getElementById('first').offsetWidth;
 		var currentButton = Math.floor(navbar.scrollLeft / buttonWidth) + 1;
 		var time = 500;
-		window.clearTimeout(scrolling);
 		var currentPos = navbar.scrollLeft;
+		var finalPos = currentButton * buttonWidth;
+		var numIntervals = Math.ceil((finalPos -  currentPos) / rightDist);
+		var intervalTime = time/numIntervals;
+		var about = document.querySelector('#aboutContainer');
 		
-		if (left) {
-			// reset the speed in the other direction
-			rightDist = 10;
-			if (currentButton !== 1) {
-				var buttonType = (currentButton) % 3;
+		snapping = window.setInterval(function() {
+			navbar.scrollLeft = navbar.scrollLeft + rightDist;
+		}, intervalTime);
+		delay = 1000;
+		window.setTimeout(function() {
+			window.clearInterval(snapping);
+			window.clearTimeout(stopping);
+			currentPos = navbar.scrollLeft;
+			if ((reveal && (buttonNum != currentButton)) || (about.dataset.inview == "in")) {
+				reveal_content(currentPos);
+			}
+			buttonNum = currentButton;
+			window.setTimeout(function() {
+				snapping = null;
+				delay = 100;
+				rightDist = 10;
+			    if (move_right) {scroll_right();}
+				else if (move_left) {scroll_left();}
+			}, 1000);
+		}, time)
+	}
+		
+    function snap_left(reveal = true) {
+		// reset the speed in the other direction
+		window.clearInterval(scrolling);
+		window.clearTimeout(stopping);
+		rightDist = 10;
+		
+		var navbar = document.getElementById('scroller');
+		const buttonWidth = document.getElementById('first').offsetWidth;
+		var currentButton = Math.floor(navbar.scrollLeft / buttonWidth) + 1;
+		var time = 500;
+		var currentPos = navbar.scrollLeft;
+		var finalPos = currentButton * buttonWidth - buttonWidth;
+		var numIntervals = Math.ceil((currentPos - finalPos) / leftDist);
+		var intervalTime = time/numIntervals;
+		var about = document.querySelector('#aboutContainer');
+		
+		snapping = window.setInterval(function() {
+			navbar.scrollLeft = navbar.scrollLeft - leftDist;
+		}, intervalTime);
+		delay = 1000;
+		window.setTimeout(function() {
+			window.clearInterval(snapping);
+			window.clearTimeout(stopping);
+			currentPos = navbar.scrollLeft;
+			if ((reveal && (buttonNum != currentButton - 1)) || (about.dataset.inview == "in")) {
+				reveal_content(currentPos);
+			}
+			buttonNum = currentButton - 1;
+			window.setTimeout(function() {
+				snapping = null;
+				delay = 100;
+				leftDist = 10;
+				if (move_left) {scroll_left();}
+				else if (move_right) {scroll_right();}
+			}, 1000);
+		}, time);
+	}
+		
+	function reveal_content(pos) {
+		var navbar = document.getElementById('scroller');
+		const buttonWidth = document.getElementById('first').offsetWidth;
+		var currentButton = Math.floor(pos / buttonWidth) + 1;
+		var leftButton = Math.floor(pos/buttonWidth);
+		var rightButton = Math.ceil(pos/buttonWidth);
+				
+		if ((pos - (leftButton * buttonWidth)) < ((rightButton * buttonWidth) - pos)) {
+			var buttonType = leftButton % 3;
+		}
+		else {
+			var buttonType = rightButton % 3;
+		}
+		
+		if (currentButton !== 1) {
 				switch (buttonType) {
 					case 1:
-						var link = document.getElementById("photosnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
+						var link = document.getElementById("musicnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].getAttribute("href");
 						break;
 					case 2:
-						var link = document.getElementById("musicnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
+						var link = document.getElementById("clothesnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].getAttribute("href");
 						break;
 					case 0:
-						var link = document.getElementById("clothesnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
+						var link = document.getElementById("photosnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].getAttribute("href");
 						break;
 				}
 			}
 			else {
-				var link = document.getElementById("photosnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
+				var link = document.getElementById("photosnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].getAttribute("href");
 			}
-			var finalPos = currentButton * buttonWidth - buttonWidth;
-			var numIntervals = Math.ceil((currentPos - finalPos) / leftDist);
-			var intervalTime = time/numIntervals;
-			window.clearTimeout(scrolling);
-			window.clearInterval(stopping);
-			snapping = window.setInterval(function() {
-				navbar.scrollLeft = navbar.scrollLeft - leftDist;
-			}, intervalTime);
-			delay = 1000;
-			window.setTimeout(function() {
-				window.clearInterval(snapping);
-				window.setTimeout(function() {
-					delay = 100;
-					leftDist = 10;
-					if (move && rightDist == 10) {scroll_left();}
-				}, 1000);
-			}, time);
-		}
-		else {
-			leftDist = 10;
-			var buttonType = (currentButton + 1) % 3;
-				switch (buttonType) {
-					case 1:
-						var link = document.getElementById("photosnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
-						break;
-					case 2:
-						var link = document.getElementById("musicnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
-						break;
-					case 0:
-						var link = document.getElementById("clothesnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].click();
-						break;
-				}
-			var finalPos = currentButton * buttonWidth;
-			var numIntervals = Math.ceil((finalPos -  currentPos) / rightDist);
-			var intervalTime = time/numIntervals;
-			window.clearTimeout(scrolling);
-			window.clearInterval(stopping);
-			snapping = window.setInterval(function() {
-				navbar.scrollLeft = navbar.scrollLeft + rightDist;
-			}, intervalTime);
-			delay = 1000;
-			window.setTimeout(function() {
-				window.clearInterval(snapping);
-				window.setTimeout(function() {
-					delay = 100;
-					rightDist = 10;
-					if (move && leftDist == 10) {scroll_right();}
-				}, 1000);
-			}, time)
-		}
+		window.location.hash = link;
+	}
+		
+	function scroll_to(pos, time=750) {
+		var navbar = $('#scroller');
+		const buttonWidth = document.getElementById('first').offsetWidth;
+		
+		if (pos > buttonWidth * 6) {
+			navbar.scrollLeft = 0;
+			pos = pos - buttonWidth * 6;
+		} 
+		navbar.animate({'scrollLeft': pos}, time);
 	}
  
     function scroll_left() {
-		var navbar = document.getElementById('scroller');
-		move = true;
+		move_left = true;
+		move_right = false;
+		if (snapping == null) {
+			var navbar = document.getElementById('scroller');
 		
-		if (stopping) {
 			window.clearInterval(scrolling);
 			window.clearTimeout(stopping);
-			leftDist = 10;
 			rightDist = 10;
 			speed = 3;
-			stopping = null;
-		} 
 		
-		navbar.scrollLeft = navbar.scrollLeft - leftDist;
-		
-		if (navbar.scrollLeft < 10) {
-			navbar.scrollLeft = 4700;
+			scrolling = window.setInterval(function() {
+				navbar.scrollLeft = navbar.scrollLeft - leftDist;
+				move_left = true;
+				leftDist += speed;
+				loop_scroll();
+        	}, delay);
 		}
- 
-        scrolling = window.setTimeout(function() {
-			scroll_left();
-			leftDist += speed;
-        }, delay);	
     }
  
     function scroll_right() {
-		var navbar = document.getElementById('scroller');
-		var buttonWidth = document.getElementById('first').offsetWidth;
-		move = true;
+		move_right = true;
+		move_left = false;
+		if (snapping == null) {
+			var navbar = document.getElementById('scroller');
 		
-		if (stopping) {
 			window.clearInterval(scrolling);
 			window.clearTimeout(stopping);
 			leftDist = 10;
-			rightDist = 10;
 			speed = 3;
-			stopping = null;
-		} 
- 		
-		navbar.scrollLeft = navbar.scrollLeft + rightDist;
-		if (navbar.scrollLeft > (buttonWidth * 6 - 100)) {
-			navbar.scrollLeft = 0;
-		}
- 
-        scrolling = window.setTimeout(function() {
-            scroll_right();
-			rightDist += speed;
-        }, delay);
-    }
- 
-    function stop_scroll() {
-		var navbar = document.getElementById('scroller');
-		move = false;
 		
-		window.clearTimeout(scrolling);
-		delay = 100;
-		
-		if (leftDist > rightDist) {
-			var time = Math.floor(leftDist/speed) * 100 + 100
-			
-			navbar.scrollLeft = navbar.scrollLeft - leftDist;
-			
 			scrolling = window.setInterval(function() {
-				navbar = document.getElementById('scroller');
-				navbar.scrollLeft = navbar.scrollLeft - leftDist;
-				leftDist -= speed;
-				if (navbar.scrollLeft < 10) {
-					navbar.scrollLeft = 4700;
-				}
-			}, delay);
-			
-			stopping = window.setTimeout(function() {
-				window.clearInterval(scrolling);
-				leftDist = 10;
-				rightDist = 10;
-				speed = 3;
-			}, time)
-		}
-		
-		else if (rightDist > leftDist) {
-			var time = Math.floor(rightDist/speed) * 100 + 100
-			var buttonWidth = document.getElementById('first').offsetWidth;
-			
-			navbar.scrollLeft = navbar.scrollLeft + rightDist;
-			
-			scrolling = window.setInterval(function() {
-				navbar = document.getElementById('scroller');
 				navbar.scrollLeft = navbar.scrollLeft + rightDist;
-				rightDist -= speed;
-				if (navbar.scrollLeft > (buttonWidth * 6 - 100)) {
+				move_right = true;
+				rightDist += speed;
+				loop_scroll();
+        	}, delay);
+		}
+    }
+		
+	
+	function loop_scroll() {
+		var buttonWidth = document.getElementById('first').offsetWidth;
+		var navbar = document.getElementById('scroller');
+		console.log(navbar.scrollLeft)
+		
+		if (navbar.scrollLeft <= 10) {
+				navbar.scrollLeft = buttonWidth * 6;
+			}
+		else if (navbar.scrollLeft > (buttonWidth * 6 - 100)) {
 					navbar.scrollLeft = 0;
 				}
-			}, 100);
+	}
+		
+	function stop_scroll() {
+		window.clearInterval(scrolling);
+		if (snapping == null) {
+			var navbar = document.getElementById('scroller');
+			var time = 100
+			var currentPos = navbar.scrollLeft;
+			delay = 100;
+		
+			// Going left
+			if (leftDist > rightDist) {
+				time = Math.floor(leftDist/speed) * 100 + 100
+			
+				navbar.scrollLeft = navbar.scrollLeft - leftDist;
+			
+				scrolling = window.setInterval(function() {
+					navbar.scrollLeft = navbar.scrollLeft - leftDist;
+					leftDist -= speed;
+					loop_scroll();
+				}, delay);
+			}
+		
+			// Going right
+			else if (rightDist > leftDist) {
+				time = Math.floor(rightDist/speed) * 100 + 100
+				var buttonWidth = document.getElementById('first').offsetWidth;
+			
+				navbar.scrollLeft = navbar.scrollLeft + rightDist;
+			
+				scrolling = window.setInterval(function() {
+					navbar.scrollLeft = navbar.scrollLeft + rightDist;
+					rightDist -= speed;
+					loop_scroll();
+				}, 100);
+			}
 			
 			stopping = window.setTimeout(function() {
+				var finalPos = navbar.scrollLeft;
 				window.clearInterval(scrolling);
 				leftDist = 10;
 				rightDist = 10;
 				speed = 3;
+				snap_to(0);
+				move_left = false;
+				move_right = false;
 			}, time)
 		}
+		else {
+			move_left = false;
+			move_right = false;
+		}
     }
-    </script>
+		
+	$("document").ready(function main() {
+	var $scroller = $("#scroller");
+	var $scrollButtons = $('.buttonContainer').find('button');
+	
+	// scroll to middle of scroller and fade in content
+	$scroller.animate({'scrollLeft': $("#start").position().left}, 1000);
+	$("#aboutContainer").fadeIn(1000);
+		
+	$scrollButtons.on('click', function () {
+        var scrollTo = $(this).parent().position().left + $scroller.scrollLeft();
+		var scrollType = $(this).parent();
+		window.clearInterval(scrolling);
+		window.clearTimeout(stopping);
+		leftDist = 10;
+		rightDist = 10;
+		speed = 3;
+        scroll_to(scrollTo, 750);
+		
+		if (scrollType.hasClass("photoButton")) {
+			$("#photosnav").find("li.active").children("a")[0].click();
+		}
+		if (scrollType.hasClass("musicButton")) {
+			$("#musicnav").find("li.active").children("a")[0].click();
+		}
+		if (scrollType.hasClass("clothesButton")) {
+			$("#clothesnav").find("li.active").children("a")[0].click();
+		}
+	});
+	
+	$("body")[0].onhashchange = function() {
+		var anchorpoint = location.hash.slice(1)
+		var currcontent = $("div[data-inview='in']");
+		var currcontentLinks = currcontent.find("a");
+		var inside = false;
+		var nextSection = $("a[name=" + anchorpoint + "]").parent();
+		var nextSidepanel = $("a[href='" + location.hash + "']").parent().parent().parent();
+		
+		if (anchorpoint !== "about") {
+			nextSidepanel.find("li.active").removeClass("active");
+			$("a[href='" + location.hash + "']").parent().addClass("active");
+		}
+		
+		// check to see if section is in displayed container
+		currcontentLinks.each(function(index, value){
+  			if (this.name == anchorpoint) {
+				inside = true;
+				return $("this").parent();
+  			};
+		});
+		if (inside !== true) {
+			$(".content").fadeOut(750);
+			nextSection.parent().attr("data-inview", "in")
+			currcontent.attr("data-inview", "out")
+			if (anchorpoint !== "about") {
+				$(".sidePanel").css({display: "none"})
+				nextSidepanel.slideDown(1500);
+				nextSidepanel.css({display: "flex"});
+			}
+			else {
+				$(".sidePanel").slideUp(1000);
+			}
+			nextSection.parent().fadeIn(750);
+		}
+		else {
+			$(".section").fadeOut(1);
+		}
+		nextSection.fadeIn(750);
+	};
+});
+	</script>
 </head>	
 <body>
 	<header>
@@ -206,21 +350,19 @@
 	<br>
 	<div class="UI">
 		<div class="navbar">
-			<button type="button" onmouseover="scroll_left();" onmouseout="stop_scroll();" onClick="snap_to(true);" id="leftScroll">&lt;</button>
-			<div class="scrollContainer" id="scroller">
-				<div class="buttonContainer">
-					<button type="button" id="first"><div class="photoButton">Photography</div></button>
-					<button type="button"><div class="musicButton">Music</div></button>
-					<button type="button"><div class="clothesButton">Apparel</div></button>
-					<button type="button" id="start"><div class="photoButton">Photography</div></button>
-					<button type="button"><div class="musicButton">Music</div></button>
-					<button type="button"><div class="clothesButton">Apparel</div></button>
-					<button type="button"><div class="photoButton">Photography</div></button>
-					<button type="button"><div class="musicButton">Music</div></button>
-					<button type="button" id="last"><div class="clothesButton">Apparel</div></button>
+			<button type="button" onmouseover="scroll_left();" onmouseout="stop_scroll();" onClick="snap_to(-1);" id="leftScroll">&lt;</button>
+				<div class="buttonContainer" id="scroller">
+					<div class="photoButton" id="first"><button type="button">Photography</button></div>
+					<div class="musicButton"><button type="button">Music</button></div>
+					<div class="clothesButton"><button type="button">Apparel</button></div>
+					<div class="photoButton" id="start"><button type="button">Photography</button></div>
+					<div class="musicButton"><button type="button">Music</button></div>
+					<div class="clothesButton"><button type="button">Apparel</button></div>
+					<div class="photoButton"><button type="button">Photography</button></div>
+					<div class="musicButton"><button type="button">Music</button></div>
+					<div class="clothesButton"><button type="button" id="last">Apparel</button></div>
 				</div>
-			</div>
-			<button type="button" onmouseover="scroll_right();" onmouseout="stop_scroll();" onClick="snap_to(false);" id="rightScroll">&gt;</button>
+			<button type="button" onmouseover="scroll_right();" onmouseout="stop_scroll();" onClick="snap_to(1);" id="rightScroll">&gt;</button>
 		</div>
 		<div class="sidePanel" id="photosnav">
 				<ul>
@@ -290,83 +432,5 @@
 	</div>
 </div>
 	
-<script type="text/javascript">
-$("document").ready(function scroll_to() {
-	var $scroller = $('#scroller');
-	var $scrollButtons = $('.buttonContainer').children('button');
-	// scroll to middle of scroller and fade in content
-	// $scroller.scrollLeft($("#start").position().left);
-	$scroller.animate({'scrollLeft': $("#start").position().left}, 1000);
-	$("#aboutContainer").fadeIn(1000);
-    // assign click handler
-    $scrollButtons.on('click', function () {
-        var scrollTo = $(this).position().left;
-		var scrollType = $(this).children("div");
-        $scroller.animate({'scrollLeft': scrollTo}, 750);
-		// $(".content").fadeOut(750);
-		// $(".sidePanel").css({display: "none"})
-		if (scrollType.hasClass("photoButton")) {
-			$("#photosnav").children("ul").children("li.active").children("a")[0].click();
-			//$("#photosnav").slideDown(1500);
-			//$("#photosContainer").fadeIn(1500);
-			//$("#photosnav").css({display: "flex"});
-		}
-		if (scrollType.hasClass("musicButton")) {
-			$("#musicnav").children("ul").children("li.active").children("a")[0].click();
-			//$("#musicnav").slideDown(1500);
-			//$("#musicContainer").fadeIn(1500);
-			//$("#musicnav").css({display: "flex"});
-		}
-		if (scrollType.hasClass("clothesButton")) {
-			$("#clothesnav").children("ul").children("li.active").children("a")[0].click();
-			//$("#clothesnav").slideDown(1500);
-			//$("#clothesContainer").fadeIn(1500);
-			//$("#clothesnav").css({display: "flex"});
-		}
-		});
-	});
-	
-$("document").ready(function navigate() {
-	$("body")[0].onhashchange = function() {
-		var anchorpoint = location.hash.slice(1)
-		var currcontent = $("div[data-inview='in']");
-		var currcontentLinks = currcontent.find("a");
-		var inside = false;
-		var nextSection = $("a[name=" + anchorpoint + "]").parent();
-		var nextSidepanel = $("a[href='" + location.hash + "']").parent().parent().parent();
-		
-		if (anchorpoint !== "about") {
-			nextSidepanel.find("li.active").removeClass("active");
-			$("a[href='" + location.hash + "']").parent().addClass("active");
-		}
-		
-		// check to see if section is in displayed container
-		currcontentLinks.each(function(index, value){
-  			if (this.name == anchorpoint) {
-				inside = true;
-				return $("this").parent();
-  			};
-		});
-		if (inside !== true) {
-			$(".content").fadeOut(750);
-			nextSection.parent().attr("data-inview", "in")
-			currcontent.attr("data-inview", "out")
-			if (anchorpoint !== "about") {
-				$(".sidePanel").css({display: "none"})
-				nextSidepanel.slideDown(1500);
-				nextSidepanel.css({display: "flex"});
-			}
-			else {
-				$(".sidePanel").slideUp(1000);
-			}
-			nextSection.parent().fadeIn(750);
-		}
-		else {
-			$(".section").fadeOut(1);
-		}
-		nextSection.fadeIn(750);
-	};
-});
-</script>
 </body>
 </html>
