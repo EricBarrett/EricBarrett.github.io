@@ -14,9 +14,9 @@
 	var rightDist = 10;
 	var speed = 3;
 	var delay = 100;
+	var buttonNum = 4;
 	var move_right = false;
 	var move_left = false;
-	var buttonNum = 4;
 		
 	function snap_to(nearest = 0, reveal = true) {		
 		if (nearest < 0) {
@@ -206,7 +206,6 @@
 		}
     }
 		
-	
 	function loop_scroll() {
 		var buttonWidth = document.getElementById('first').offsetWidth;
 		var navbar = document.getElementById('scroller');
@@ -272,6 +271,36 @@
 		}
     }
 		
+	function bringIn(section) {
+		var content = section.parent();
+		var sidePanel = content.find(".sidePanel")
+			
+		section.css("opacity", 0);
+		content.css({display:"flex"});
+		sidePanel.hide();
+		sidePanel.css("opacity", 1);
+		sidePanel.slideDown(1500);
+		section.animate({opacity:1}, 750);
+	};
+		
+	function hoverAnimStart(animateObj) {
+//		animateObj.animate({'padding-right': 20}, 800, 'swing');
+//		animateObj.promise.done(function () {
+//			console.log("callback");
+//			}
+//		);
+//		hover = window.setInterval(function () {
+		console.log("mouse hover");
+		console.log(animateObj.css("padding-right"));
+		animateObj.css("padding-right", 20);
+		window.setTimeout( function() {
+			console.log("callback");
+			console.log(animateObj.css("padding-right"));
+			animateObj.css("padding-right", 0);
+		}, 800);
+//		}, 1600);
+	 }
+		
 	$("document").ready(function main() {
 	var $scroller = $("#scroller");
 	var $scrollButtons = $('.buttonContainer').find('button');
@@ -289,21 +318,30 @@
 	$scrollButtons.on('click', function () {
         var scrollTo = $(this).parent().position().left + $scroller.scrollLeft();
 		var scrollType = $(this).parent();
+		
 		window.clearInterval(scrolling);
 		window.clearTimeout(stopping);
 		leftDist = 10;
 		rightDist = 10;
 		speed = 3;
         scroll_to(scrollTo, 750);
-		
 		if (scrollType.hasClass("photoButton")) {
 			$("#photosnav").find("li.active").children("a")[0].click();
-		}
+			if ($("#photosContainer").attr("data-inview") == "in" && $("#photosContainer .slideOut").text().trim() != "»") {
+				$("#photosnav").slideToggle(750);
+			};
+		};
 		if (scrollType.hasClass("musicButton")) {
 			$("#musicnav").find("li.active").children("a")[0].click();
+			if ($("#musicContainer").attr("data-inview") == "in" && $("#musicContainer .slideOut").text().trim() != "»") {
+				$("#musicnav").slideToggle(750);
+			}
 		}
 		if (scrollType.hasClass("threedButton")) {
 			$("#threednav").find("li.active").children("a")[0].click();
+			if ($("#threedContainer").attr("data-inview") == "in" && $("#threedContainer .slideOut").text().trim() != "»") {
+				$("#threednav").slideToggle(750);
+			}
 		}
 	});
 	
@@ -318,9 +356,6 @@
 			// calculate open duration
 			if (imgCount > 0) {duration = duration * imgCount}
 			else {duration = duration * videoCount}
-			window.setTimeout(function() {
-				$(".sidePanel").css({'height':'100%'});
-        	}, duration);
 		}
 		else {
 			$(this).text("+")
@@ -373,8 +408,38 @@
 		});
 	});
 		
+	$(".slideOut").on('click', function () {
+		var sidePanel = $(this).parent();
+		var sections = sidePanel.parent().find(".section");
+		var innerText = $(this).text().trim();
+		console.log(innerText);
+		
+		if (innerText == "«") {
+			sidePanel.find(".slideOut").text("»")
+			sidePanel.animate({width: "13%"}, 500, function () {
+				sidePanel.css("transform","translate(-80%,0)");
+				sections.css("transform","translate(-8.5%,0)");
+				sidePanel.css("opacity",0.1);
+			});
+		};
+		if (innerText == "»") {
+			sidePanel.find(".slideOut").text("«")
+			sidePanel.animate({opacity: 1, width: "47.5%"}, 750);
+			sidePanel.css("transform","translate(0,0)");
+			sections.css("transform","translate(0,0)");
+		};
+	});
+		
+	$('.slideOut').hover(function(){
+		var slideButton = $(this);
+		hoverAnimStart(slideButton);
+		hoverInterval = window.setInterval(function() { hoverAnimStart(slideButton); }, 2500);
+	}, function(){
+		clearInterval(hoverInterval);
+    });
+		
 	$("body")[0].onhashchange = function() {
-		var anchorpoint = location.hash.slice(1)
+		var anchorpoint = location.hash.slice(1);
 		var currcontent = $("div[data-inview='in']");
 		var currcontentLinks = currcontent.find("a");
 		var inside = false;
@@ -394,25 +459,25 @@
   			};
 		});
 		if (inside !== true) {
-			$(".content").fadeOut(750);
 			nextSection.parent().attr("data-inview", "in")
 			currcontent.attr("data-inview", "out")
 			if (anchorpoint !== "about") {
-				$(".sidePanel").css({display: "none"})
-				nextSidepanel.slideDown(1500);
-				nextSidepanel.css({display: "flex"});
+				$(".sidePanel").css("opacity", 0); // change to previously active sidePanel
+				$(".content").fadeOut(750);
+				bringIn(nextSection);
 			}
 			else {
-				$(".sidePanel").slideUp(1000);
+				$(".sidePanel").slideUp(750);
+				$(".content").fadeOut(750);
+				$("#aboutContainer").fadeIn(750);
 			}
-			nextSection.parent().fadeIn(750);
 		}
 		else {
 			$(".section").fadeOut(1);
 		}
 		nextSection.fadeIn(750);
 	};
-});
+	});
 	</script>
 </head>	
 <body>
@@ -440,33 +505,14 @@
 				</div>
 			<button type="button" onmouseover="scroll_right();" onmouseout="stop_scroll();" onClick="snap_to(1);" id="rightScroll">&gt;</button>
 		</div>
-		<div class="panels">
-		<div class="sidePanel" id="photosnav">
-				<ul>
-				<li class="active"><a href="#nationalpark">Gros Morne</a></li>
-				<li><a href="#santaphotos">Christmas @ the Sheraton Hotel</a></li>
-				</ul>
-		</div>
-		<div class="sidePanel" id="musicnav">
-				<ul>
-				<li class="active"><a href="#albumsingles">Instrumentals</a></li>
-				<li><a href="#album1">Hear me?</a></li>
-				</ul>
-		</div>
-		<div class="sidePanel" id="threednav">
-				<ul>
-				<li class="active"><a href="#csgo">CSGO Skins</a></li>
-				</ul>
-		</div>
-		</div>
 		<div class="content" id="aboutContainer" data-inview="in">
 		<div class="section" id="about">
 			<a name="about">
 			<div class="thumbnail"><div class="border"><img src="imgs/about/Selfie1.jpg" alt="Me with the young boy Franklin"/></div></div>
 			<div class="textwrapper">
-				<p>Eric Barrett is an artist from the island of Newfoundland. He talks to himself a lot but if you tell him that he’ll claim it’s thinking out loud. He’ll also say he doesn’t snore, which is also a blatant lie. He failed out of computer engineering to pursue his dream of creating stuff. Since he was a kid he has wanted to develop video games and obviously he is also a very talented web designer. He’s not that bad with a camera either. If you want to hire him for anything contact him at: neverloiter@gmail.com. </p>
+				<p>Eric Barrett is an artist from the island of Newfoundland. He talks to himself a lot but if you tell him that he’ll claim it’s thinking out loud. He’ll also say he doesn’t snore, which is also a blatant lie. He failed out of computer engineering to pursue his dream of creating stuff. Since he was a kid he has wanted to develop video games. He's also obviously a very talented web designer and hey, He’s not that bad with a camera either. If you happen to want to hire him for anything contact him at: neverloiter@gmail.com. </p>
 				<h1>What does this site offer?</h1>
-				<p>Currently there are some pretty pictures, ametaur music, and some beautiful coming soon text. But in the future I want to bring so much more. Further down the road <strong>I want to do cool stuff</strong> like develop <u>a video game</u>, release <u>a DnD setting</u>, design <u>clothes</u>, release <u>an album</u>, and get into <u>comedy and film/acting.</u></p>
+				<p>Currently there are some pretty pictures, ametaur music, and some CSGO Skins. But in the future I want to bring so much more. Further down the road <strong>I want to do cool stuff</strong> like develop <strong><u>a video game</u></strong>, release <strong><u>a DnD setting</u></strong>, design <strong><u>clothes</u></strong>, release <strong><u>an album</u></strong>, and get into <strong><u>comedy and film/acting.</u></strong></p>
 				<h1>What is No Loitering?</h1>
 				<p>2 kids and a dream</p>
 				<div class="pic1"><img src="imgs/about/origin.jpg" alt="2 kids and a dream"/></div>
@@ -475,6 +521,13 @@
 		</div>
 	</div>
 	<div class="content" id="photosContainer" data-inview="out">
+		<div class="sidePanel" id="photosnav">
+			<span class="slideOut">&laquo;</span>
+			<ul>
+				<li class="active"><a href="#nationalpark">Gros Morne</a></li>
+				<li><a href="#santaphotos">Christmas @ the Sheraton Hotel</a></li>
+			</ul>
+		</div>
 		<div class="section" id="trailpics">
 			<a name="nationalpark" target="_top">
 			<div class="lr_embed" style="position: relative; padding-bottom: 50%; height: 0; overflow: hidden;">
@@ -491,6 +544,13 @@
 		</div>
 	</div>
 	<div class="content" id="musicContainer" data-inview="out">
+		<div class="sidePanel" id="musicnav">
+			<span class="slideOut">&laquo;</span>
+			<ul>
+				<li class="active"><a href="#albumsingles">Instrumentals</a></li>
+				<li><a href="#album1">Hear me?</a></li>
+			</ul>
+		</div>
 		<div class="section" id="singles">
 		<a name="albumsingles" target="_top">
 			<h1>Instrumentals</h1>
@@ -509,6 +569,12 @@
 		</div>
 	</div>
 	<div class="content" id="threedContainer">
+		<div class="sidePanel" id="threednav">
+			<span class="slideOut">&laquo;</span>
+			<ul>
+				<li class="active"><a href="#csgo">CSGO Skins</a></li>
+			</ul>
+		</div>
 		<div class="section" id="store">
 			<a name="csgo" target="_top">
 				<div class="skin">
@@ -528,6 +594,7 @@
 							</div>
 						</div>
 					</div>
+					<div class="spoilSpacer"></div>
 					<div class="spoiler">
 						<div class="spoilerHead"><h1>Pictures</h1><div class="spoilerToggle"><button type="button">+</button></div></div>
 						<div class="spoilerContainer">
@@ -560,6 +627,7 @@
 							</div>
 						</div>
 					</div>
+					<div class="spoilSpacer"></div>
 					<div class="spoiler">
 						<div class="spoilerHead"><h1>Pictures</h1><div class="spoilerToggle"><button type="button">+</button></div></div>
 						<div class="spoilerContainer">
