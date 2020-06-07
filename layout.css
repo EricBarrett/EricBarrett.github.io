@@ -5,27 +5,11 @@ html {
 }
 
 body {
-	background-image: url("imgs/website background.png"), url("imgs/tilex.png"), url("imgs/tiley.png");
+	background-image: url("website background.png"), url("tilex.png"), url("tiley.png");
 	background-repeat: no-repeat, repeat-x, repeat;
 	background-position: right, left, bottom;
 	height: 100%;
 	margin: 0px;
-}
-
-a[href]:link {
-	color: rgba(100,100,100,1);
-}
-
-a[href]:visited {
-	color: rgba(200,200,200,1);
-}
-
-a[href]:hover {
-	color: rgba(255,255,255,1);
-}
-
-a[href]:active {
-	color: rgba(100,100,100,1);
 }
 
 .logo {
@@ -57,7 +41,6 @@ a[href]:active {
 	height: 75px;
 	width: 100%;
 	box-shadow:  0 0 100px  rgba(0,0,0,1);
-	margin: 0;
 }
 
 .navbar button {
@@ -160,7 +143,7 @@ a[href]:active {
 
 .buttonContainer::-webkit-scrollbar { width: 0 }
 
-.photoButton, .musicButton, .threedButton {
+.photoButton, .musicButton, .clothesButton {
 	flex: 0 0 auto;
 	box-sizing: border-box;
 	position: relative;
@@ -169,15 +152,10 @@ a[href]:active {
 	width: 34%;
 }
 
-.panels {
-	height: 100%;
-}
-
 .sidePanel {
 	display: none;
-	position: -webkit-sticky;
-	position: sticky;
-	top: 0px;
+	align: left;
+	float: left;
 	font-size: 32px;
 	opacity: 0.8;
 	z-index: 2;
@@ -185,9 +163,10 @@ a[href]:active {
 	border-radius: 0px 15px 15px 0px;
 	border-color: rgba(255,255,255,0.80);
 	border-width: 3px;
-	margin: 0;
-	width: 34.5%;
+	position: relative;
+	marigin: 0;
 	height: 100%;
+	width: 34.5%;
 	background-color: #000000;
 	box-shadow:  0 0 100px  rgba(0,0,0,1);
 }
@@ -204,10 +183,6 @@ a[href]:active {
 	marigin: 10px 0px;
 }
 
-.testPanel li {
-	marigin: 10px 0px;
-}
-
 .sidePanel li:hover {
 	color: rgba(30,30,30,0.5);
 }
@@ -220,6 +195,10 @@ a[href]:active {
 	color: rgba(200,200,200,1);
 }
 
+.sidePanel a:active {
+	color: rgba(100,100,100,1);
+}
+
 .sidePanel a:visited {
 	color: rgba(200,200,200,1);
 }
@@ -227,10 +206,6 @@ a[href]:active {
 .sidePanel a:hover {
 	color: rgba(30,30,30,0.5);
 	list-style-type: none;
-}
-
-.sidePanel a:active {
-	color: rgba(100,100,100,1);
 }
 
 .content {
@@ -284,6 +259,13 @@ a[href]:active {
 	left: 40px;
 }
 
+.textwrapper {
+	font-size: 24px;
+	text-align: justify;
+	color: rgba(255,255,255,.9);
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
 .textwrapper h1 {
 	text-align: center;
 }
@@ -298,10 +280,6 @@ a[href]:active {
 	width: 100%;
 	height: 100%;
 	margin: 0px;
-	font-size: 24px;
-	text-align: justify;
-	color: rgba(255,255,255,.9);
-	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 #about {
@@ -312,11 +290,7 @@ a[href]:active {
 	display: inline-block;
 }
 
-#singles iframe {
-	margin: 8px 0;
-}
-
-#trailpics {
+#santapics {
 	display: inline-block;
 }
 
@@ -339,135 +313,4 @@ a[href]:active {
 .pic1 img {
 	height: auto;
 	width: 60%;
-}
-
-.skin {
-	margin-bottom: 82px;
-	border-style: solid solid none solid;
-    border-color: rgba(255,255,255,0.8);
-	border-width: 2px;
-	border-radius: 10px;
-}
-
-.sketchfab-embed-wrapper {
-	position: relative;
-	width: 100%;
-	height: auto;
-}
-
-.spoiler {
-	margin: 18px 0px;
-}
-
-.disclaimer {
-	font-size: 18px;
-	color: rgba(200,30,30,1);
-}
-
-.spoilerHead {
-	width: 100%;
-	display: flex;
-	background-color: rgba(0,0,0,0.80);
-	border-style: solid;
-    border-color: rgba(255,255,255,0.8);
-	border-width: 1px;
-	border-radius: 10px;
-}
-
-.spoilerHead h1 {
-	margin: auto 10px;
-}
-
-.spoilerToggle {
-	margin-left: auto; 
-	margin-right: 0px;
-	margin-top: 8px;
-	margin-bottom: 8px;
-	height: 100%;
-	width: 5%;
-}
-
-.spoilerToggle button {
-	display: inline-block;
-	position: relative;
-	text-align: center;
-	box-sizing: border-box;
-	padding: 0;
-	width: 100%;
-	height: 100%;
-	font-size: 52px;
-	font-weight: bold;
-	color: rgba(255,255,255,0.8);
-	background-color: rgba(75,75,75,0.3);
-	border-style: solid;
-    border-color: rgba(200,200,200,1);
-	border-width: 1px;
-	border-radius: 15px 0px 0px 15px;
-}
-
-.spoilerContainer {
-	width: 100%;
-}
-
-.spoilerContents {
-	display: none;
-	width: 100%;
-	background-color: rgba(0,0,0,0.80);
-	border-style: solid;
-    border-color: rgba(200,200,200,0.8);
-	border-width: 2px;
-	border-radius: 10px;
-	text-align: center;
-}
-
-.spoilerContents img {
-	max-width: 100%;
-	cursor: pointer;
-}
-
-.imgPreview {
-	display: none;
-	position: fixed;
-	z-index: 100;
-	padding-top: 100px;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	overflow: auto;
-	background-color: rgba(0,0,0,0.8);
-	-webkit-backdrop-filter: blur(10px);
-	backdrop-filter: blur(10px);
-}
-
-.previewContent {
-	margin: auto;
-	display: block;
-	width: 80%;
-	max-width: 2560px;
-	animation-name: zoom;
-	animation-duration: 0.6s;
-}
-
-@keyframes zoom {
-  from {transform:scale(0)}
-  to {transform:scale(1)}
-}
-
-/* The Close Button */
-.close {
-  position: absolute;
-  top: 15px;
-  right: 35px;
-  color: #f1f1f1;
-  font-size: 40px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.close:hover,
-.close:focus {
-  color: #bbb;
-  text-decoration: none;
-  cursor: pointer;
 }
