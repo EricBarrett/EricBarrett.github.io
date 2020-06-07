@@ -5,11 +5,27 @@ html {
 }
 
 body {
-	background-image: url("website background.png"), url("tilex.png"), url("tiley.png");
+	background-image: url("imgs/website background.png"), url("imgs/tilex.png"), url("imgs/tiley.png");
 	background-repeat: no-repeat, repeat-x, repeat;
 	background-position: right, left, bottom;
 	height: 100%;
 	margin: 0px;
+}
+
+a[href]:link {
+	color: rgba(100,100,100,1);
+}
+
+a[href]:visited {
+	color: rgba(200,200,200,1);
+}
+
+a[href]:hover {
+	color: rgba(255,255,255,1);
+}
+
+a[href]:active {
+	color: rgba(100,100,100,1);
 }
 
 .logo {
@@ -92,22 +108,28 @@ body {
 
 .scrollContainer {
 	display: flex;
-	flex-flow: column wrap;
+	justify-content: space-between;
+	align-items: baseline;
 	overflow-x: auto;
+	overflow-y: visible;
 	-webkit-overflow-scrolling: touch;
 	width: 100%;
 	height: 100%;
 	position: absolute;
-	top: 95px;
+	align-content: center;
 }
 
+.scrollContainer::-webkit-scrollbar {    display: none;}
+
 .content {
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
 	position: relative;
 	width: 88%;
 	height: 100%;
-	left: auto;
-	float: left;
 	margin: 15px 6%;
+	justify-content: center;
 }
 
 #aboutContainer {
@@ -120,9 +142,15 @@ body {
 	display: none;
 }
 
+
 #musicContainer iframe {
 	background-color: rgba(0,0,0,0);
 	opacity: 0.8;
+	margin-bottom: 16px;
+}
+
+#threedContainer {
+	padding-right: 6%;
 }
 
 .thumbnail {
@@ -169,22 +197,17 @@ body {
 }
 
 .section {
-	display: none;
 	width: 100%;
 	height: 100%;
-	margin: 0px;
+	font-size: 24px;
+	color: rgba(255,255,255,.9);
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	text-align: justify;
 }
 
-#about {
-	display: inline-block;
-}
-
-#singles {
-	display: inline-block;
-}
-
-#santapics {
-	display: inline-block;
+.sectionHead {
+	text-decoration: underline;
+	font-weight: bold;
 }
 
 .cumming {
@@ -206,4 +229,103 @@ body {
 .pic1 img {
 	height: auto;
 	width: 60%;
+}
+
+.skin {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 82px;
+	border-style: solid solid none solid;
+    border-color: rgba(255,255,255,0.8);
+	border-width: 2px;
+	border-radius: 10px;
+}
+
+.itemDescription {
+	margin: 0px 10px;
+}
+
+.itemDescription a {
+	display: inline;
+}
+
+.sketchfab-embed-wrapper {
+	position: relative;
+	width: 100%;
+	height: auto;
+}
+
+.spoiler {
+	margin: 0px 0px 0px;
+}
+
+.spoilSpacer {
+	height: 26px;
+}
+
+.disclaimer {
+	font-size: 18px;
+	color: rgba(200,30,30,1);
+}
+
+.spoilerHead {
+	width: 100%;
+	display: flex;
+	background-color: rgba(0,0,0,0.80);
+	border-style: solid;
+    border-color: rgba(255,255,255,0.8);
+	border-width: 1px;
+	border-radius: 10px;
+}
+
+.spoilerHead h1 {
+	margin: auto 10px;
+}
+
+.spoilerToggle {
+	margin-left: auto; 
+	margin-right: 0px;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	height: 100%;
+	width: 5%;
+}
+
+.spoilerToggle button {
+	display: inline-block;
+	position: relative;
+	text-align: center;
+	box-sizing: border-box;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	font-size: 52px;
+	font-weight: bold;
+	color: rgba(255,255,255,0.8);
+	background-color: rgba(75,75,75,0.3);
+	border-style: solid;
+    border-color: rgba(200,200,200,1);
+	border-width: 1px;
+	border-radius: 15px 0px 0px 15px;
+}
+
+.spoilerContainer {
+	width: 100%;
+}
+
+.spoilerContents {
+	display: none;
+	width: 100%;
+	background-color: rgba(0,0,0,0.80);
+	border-style: solid;
+    border-color: rgba(200,200,200,0.8);
+	border-width: 2px;
+	border-radius: 10px;
+	text-align: center;
+}
+
+.spoilerContents img {
+	max-width: 100%;
+	cursor: pointer;
+	transition: 0.3s;
 }
