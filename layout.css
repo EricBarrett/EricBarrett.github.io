@@ -39,7 +39,6 @@ a[href]:active {
     position: relative;
 	width: 100%;
 	height: auto;
-	margin: 0;
 }
 
 .UI {
@@ -170,6 +169,10 @@ a[href]:active {
 	width: 34%;
 }
 
+.panels {
+	height: 100%;
+}
+
 .sidePanel {
 	display: none;
 	position: -webkit-sticky;
@@ -182,18 +185,14 @@ a[href]:active {
 	border-radius: 0px 15px 15px 0px;
 	border-color: rgba(255,255,255,0.80);
 	border-width: 3px;
-	margin: 0px 36px 0px 0px;
-	width: 47.5%;
-	height: 100vh;
+	margin: 0;
+	width: 34.5%;
+	height: 100%;
 	background-color: #000000;
 	box-shadow:  0 0 100px  rgba(0,0,0,1);
-	justify-content: flex-start;
-	transition: transform 0.3s ease;
 }
 
 .sidePanel ul {
-	align-self: flex-start;
-	flex-basis: 2%;
 	color: rgba(100,100,100,1);
 	border-style: single;
 	list-style-type: none;
@@ -210,7 +209,7 @@ a[href]:active {
 }
 
 .sidePanel li:hover {
-	color: rgba(30,30,30,1);
+	color: rgba(30,30,30,0.5);
 }
 
 .sidePanel li.active {
@@ -226,7 +225,7 @@ a[href]:active {
 }
 
 .sidePanel a:hover {
-	color: rgba(30,30,30,1);
+	color: rgba(30,30,30,0.5);
 	list-style-type: none;
 }
 
@@ -236,36 +235,21 @@ a[href]:active {
 
 .content {
 	position: absolute;
-	width: 100%;
-	flex-wrap: nowrap;
-	align-items: stretch;
-	justify-content: center;
+	float: right;
+	width: 60%;
+	height: auto;
+	top: 95px;
+	left: 36%;
 	display: none;
-	margin: 0px;
 }
 
-.section {
-	display: none;
-	flex-direction: column;
-	width: 86%;
-	height: 100%;
-	margin: 18px 18px 18px -18px;
-	font-size: 24px;
-	text-align: justify;
-	color: rgba(255,255,255,.9);
-	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-}
-
-#store {
-	display: flex;
-}
-
-#singles {
-	display: inline-block;
-}
-
-#trailpics {
-	display: inline-block;
+#aboutContainer {
+	position: absolute;
+	width: 88%;
+	height: 1000px;
+	top: 125px;
+	margin: 0px 6%;
+	left: auto;
 }
 
 #musicContainer iframe {
@@ -309,23 +293,31 @@ a[href]:active {
 	text-indent: 40px;
 }
 
-#aboutContainer {
-	position: absolute;
-	width: 88%;
-	height: 1000px;
-	top: 125px;
-	margin: 0px 6%;
-	left: auto;
+.section {
+	display: none;
+	width: 100%;
+	height: 100%;
+	margin: 0px;
+	font-size: 24px;
+	text-align: justify;
+	color: rgba(255,255,255,.9);
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 #about {
 	display: inline-block;
-	margin: 0px;
-	width: 100%;
+}
+
+#singles {
+	display: inline-block;
 }
 
 #singles iframe {
 	margin: 8px 0;
+}
+
+#trailpics {
+	display: inline-block;
 }
 
 .cumming {
@@ -350,21 +342,11 @@ a[href]:active {
 }
 
 .skin {
-	display: flex;
-	flex-direction: column;
 	margin-bottom: 82px;
 	border-style: solid solid none solid;
     border-color: rgba(255,255,255,0.8);
 	border-width: 2px;
 	border-radius: 10px;
-}
-
-.itemDescription {
-	margin: 0px 10px;
-}
-
-.itemDescription a {
-	display: inline;
 }
 
 .sketchfab-embed-wrapper {
@@ -374,11 +356,7 @@ a[href]:active {
 }
 
 .spoiler {
-	margin: 0px 0px 0px;
-}
-
-.spoilSpacer {
-	height: 26px;
+	margin: 18px 0px;
 }
 
 .disclaimer {
@@ -445,7 +423,6 @@ a[href]:active {
 .spoilerContents img {
 	max-width: 100%;
 	cursor: pointer;
-	transition: 0.3s;
 }
 
 .imgPreview {
@@ -493,21 +470,4 @@ a[href]:active {
   color: #bbb;
   text-decoration: none;
   cursor: pointer;
-}
-
-.slideOut {
-	position: absolute;
-	top: calc(50% - 80px);
-	right: 8px;
-	color: #f1f1f1;
-	font-size: 80px;
-	font-weight: bold;
-	transition: 0.8s;
-	padding-right: 0px;
-}
-
-.slideOut:hover,
-.slideOut:focus {
-  text-decoration: none;
-  cursor: default;
 }
