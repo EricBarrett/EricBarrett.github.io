@@ -167,7 +167,7 @@ a[href]:active {
 .border {
 	position: relative;
 	width: 50%;
-	max-width: 100%;
+	max-width: 750px;
 	height: auto;
 	border-style: double;
 	border-width: 5px;

@@ -27,15 +27,31 @@
 		$scrollButtons.on('click', function () {
 			var scrollType = $(this).children("div");
 			var nav = $('.scrollContainer');
+			var anchorpoint = location.hash.slice(1);
 			
 			if (scrollType.hasClass("photoButton")) {
-				window.location.hash = "nationalpark";
+				if (anchorpoint !== "nationalpark") {
+					window.location.hash = "nationalpark";	
+				}
+				else {
+					$('.scrollContainer').scrollLeft(0);
+				}
 			}
 			if (scrollType.hasClass("musicButton")) {
-				window.location.hash = "albumsingles";
+				if (anchorpoint !== "albumsingles") {
+					window.location.hash = "albumsingles";	
+				}
+				else {
+					$('.scrollContainer').scrollLeft($(window).width());
+				}
 			}
 			if (scrollType.hasClass("threedButton")) {
-				window.location.hash = "csgo";
+				if (anchorpoint !== "csgo") {
+					window.location.hash = "csgo";	
+				}
+				else {
+					$('.scrollContainer').scrollLeft(9999);
+				}
 			}
 		});
 		
@@ -58,7 +74,7 @@
 		});	
 	
 		$("body")[0].onhashchange = function() {
-			var anchorpoint = location.hash.slice(1)
+			var anchorpoint = location.hash.slice(1);
 			var currcontent = $("div[data-inview='in']");
 			var currcontentLinks = currcontent.find("a");
 			var inside = false;
