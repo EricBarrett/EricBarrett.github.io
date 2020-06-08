@@ -57,6 +57,7 @@ a[href]:active {
 	height: 75px;
 	width: 100%;
 	box-shadow:  0 0 100px  rgba(0,0,0,1);
+	z-index: 99;
 }
 
 .navbar button {
@@ -74,8 +75,10 @@ a[href]:active {
 	width: 100%;
 	display: flex;
 	flex-wrap: nowrap;
+	text-align: justify;
 	z-index: -1;
 	-webkit-overflow-scrolling: touch;
+	align-content: center;
 }
 
 .buttonContainer button {
@@ -84,9 +87,7 @@ a[href]:active {
 	border-width: 2px;
 	border-radius: 4px;
 	float: left;
-	text-align: center;
 	box-sizing: border-box;
-	padding: 14px 8%;
 	width: 34%;
     transition: 0.3s;
 	opacity: .8;
@@ -115,7 +116,6 @@ a[href]:active {
 	width: 100%;
 	height: 100%;
 	position: absolute;
-	align-content: center;
 }
 
 .scrollContainer::-webkit-scrollbar {    display: none;}
@@ -124,23 +124,24 @@ a[href]:active {
 	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
+	align-items: flex-start;
+	align-content: flex-start;
 	position: relative;
-	width: 100%;
+	width: 99%;
 	height: 100%;
-	margin: 15px 0;
+	margin: 15px 0.5%;
 	justify-content: center;
 }
 
 #aboutContainer {
 	position: absolute;
 	width: 88%;
-	height: 1000px;
+	height: 100%;
 	top: 125px;
 	margin: 0px 6%;
 	left: auto;
 	display: none;
 }
-
 
 #musicContainer iframe {
 	background-color: rgba(0,0,0,0);
@@ -148,38 +149,43 @@ a[href]:active {
 	margin-bottom: 16px;
 }
 
+#threedContainer {
+	padding-right: 0.5%;
+}
+
 .thumbnail {
 	position: relative;
-	width: 33%;
-    height: 150%;
+	max-width: 50%;
+	min-height: 35%;
+	max-height: 2400px;
+	margin: 0 auto;
 	z-index: 0;
     overflow: hidden;
-	float: left;
 }
 
-.thumbnail img {
-	max-width: 100%;
-	height: auto;
-}
 
 .border {
-	position: absolute;
+	position: relative;
+	width: 50%;
 	max-width: 100%;
 	height: auto;
 	border-style: double;
 	border-width: 5px;
+	margin: 0px auto;
+}
+
+.border img {
+	max-width: 100%;
+	height: auto;
 }
 
 .textwrapper {
 	position: relative;
-	left: 40px;
-}
-
-.textwrapper {
 	font-size: 24px;
 	text-align: justify;
 	color: rgba(255,255,255,.9);
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	margin-top: 12px;
 }
 
 .textwrapper h1 {
@@ -223,7 +229,7 @@ a[href]:active {
 
 .pic1 img {
 	height: auto;
-	width: 60%;
+	width: 100%;
 }
 
 .skin {
