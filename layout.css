@@ -497,13 +497,15 @@ a[href]:active {
 
 .slideOut {
 	position: absolute;
-	top: calc(50% - 80px);
 	right: 8px;
 	color: #f1f1f1;
 	font-size: 80px;
 	font-weight: bold;
 	transition: 0.8s;
 	padding-right: 0px;
+	padding-top: 50%;
+	padding-bottom: 50%;
+	top: 80px;
 }
 
 .slideOut:hover,

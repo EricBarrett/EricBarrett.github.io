@@ -278,7 +278,12 @@
 		section.css("opacity", 0);
 		content.css({display:"flex"});
 		sidePanel.hide();
-		sidePanel.css("opacity", 1);
+		if (content.find(".slideOut").text().trim() == "»") {
+			sidePanel.css("opacity", 0.1);
+		}
+		else {
+			sidePanel.css("opacity", 1);
+		}
 		sidePanel.slideDown(1500);
 		section.animate({opacity:1}, 750);
 	};
@@ -414,15 +419,22 @@
 		var innerText = $(this).text().trim();
 		console.log(innerText);
 		
+		// Resize padding
+		$(this).css("top", "calc(50% - 80px)");
+		$(this).css("padding-top", "0");
+		$(this).css("padding-bottom", "0");
+		// Slide out
 		if (innerText == "«") {
-			sidePanel.find(".slideOut").text("»")
+			sidePanel.find(".slideOut").text("»");
 			sidePanel.animate({width: "13%"}, 500, function () {
 				sidePanel.css("transform","translate(-80%,0)");
 				sections.css("transform","translate(-8.5%,0)");
 				sidePanel.css("opacity",0.1);
 			});
 		};
+		// Slide in
 		if (innerText == "»") {
+			//$(this).css("top", "80px");
 			sidePanel.find(".slideOut").text("«")
 			sidePanel.animate({opacity: 1, width: "47.5%"}, 750);
 			sidePanel.css("transform","translate(0,0)");
