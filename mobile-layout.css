@@ -5,7 +5,7 @@ html {
 }
 
 body {
-	background-image: url("imgs/website background.png"), url("imgs/tilex.png"), url("imgs/tiley.png");
+	background-image: url("imgs/website background.jpg"), url("imgs/tilex.jpg"), url("imgs/tiley.jpg");
 	background-repeat: no-repeat, repeat-x, repeat;
 	background-position: right, left, bottom;
 	height: 100%;
