@@ -7,304 +7,311 @@
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script type="text/javascript">
-    var scrolling = null;
+	var scrolling = null;
 	var stopping = null;
 	var snapping = null;
-	var leftDist = 10;
-	var rightDist = 10;
-	var speed = 3;
+	var vel = 10;
+	var accel = 0;
 	var delay = 100;
-	var buttonNum = 4;
-	var move_right = false;
-	var move_left = false;
+	var numOfButtons = 3;
+	var navButtons = {
+		0: "photosContainer",
+		1: "musicContainer",
+		2: "threedContainer"
+	};
 		
-	function snap_to(nearest = 0, reveal = true) {		
-		if (nearest < 0) {
-			snap_left(reveal);
-		}
-		else if(nearest > 0){
-			snap_right(reveal);
-		}
-		else {
-			var navbar = document.getElementById('scroller');
-			const buttonWidth = document.getElementById('first').offsetWidth;
-			var currentPos = navbar.scrollLeft;
-			
-			if (currentPos < buttonWidth) {
-				snap_right(reveal);
+	function hoverAnimStart(animateObj) {
+		animateObj.css("padding-right", 20);
+		window.setTimeout( function() {
+			animateObj.css("padding-right", 0);
+		}, 800);
+	 }
+
+	function reveal_content(pos) {
+		var buttonIndex = getIndexFromPos(pos);
+		var sidePanel = getPanelFromIndex(buttonIndex);
+		sidePanel.find("li.active").children("a")[0].click();
+	}
+
+	function reveal_section(anchorpoint) {
+			if (anchorpoint == undefined) {
+				anchorpoint = location.hash.slice(1);
 			}
-			else {
-				var leftButton = buttonWidth * Math.floor(currentPos/buttonWidth);
-				var rightButton = buttonWidth * Math.ceil(currentPos/buttonWidth);
-				if ((currentPos - leftButton) < (rightButton - currentPos)) {
-					snap_left(reveal);
+			var currcontent = $("div[data-inview='in']");
+			var currcontentLinks = currcontent.find("a");
+			var inside = false;
+			var nextSection = $("a[name='" + anchorpoint + "']").parent();
+			var nextContent = nextSection.parent();
+			var nextSidePanel = $("a[href='" + location.hash + "']").parent().parent().parent();
+	
+			//switch active class on SidePanel links
+			if (anchorpoint !== "about") {
+				nextSidePanel.find("li.active").removeClass("active");
+				$("a[href='" + location.hash + "']").parent().addClass("active");
+			}
+			// check to see if section is in displayed content
+			currcontentLinks.each(function(index, value){
+  				if (this.name == anchorpoint) {
+					inside = true;
+					return $("this").parent();
+  				};
+			});
+			// switch inview data if section is outside of displayed content
+			if (inside !== true) {
+				nextSection.parent().attr("data-inview", "in")
+				currcontent.attr("data-inview", "out")
+				// change out sidePanel and content
+				if (anchorpoint !== "about") {
+					$(".sidePanel").css("opacity", 0);
+					$(".content").fadeOut(750);
+					nextSection.css("opacity", 0);
+					nextContent.css({display:"flex"});
+					nextSidePanel.hide();
+					if (nextContent.find(".slideOut").text().trim() == "»") {
+						nextSidePanel.css("opacity", 0.1);
+					}
+					else {
+						nextSidePanel.css("opacity", 1);
+					}
+					nextSidePanel.slideDown(1500);
+					nextSection.animate({opacity:1}, 750);
 				}
 				else {
-					snap_right(reveal);
-				}
-			}
-		}
-	}
-	
-	function snap_right(reveal = true) {
-		// reset the speed in the other direction
-		window.clearInterval(scrolling);
-		window.clearTimeout(stopping);
-		leftDist = 10;
-		
-		var navbar = document.getElementById('scroller');
-		const buttonWidth = document.getElementById('first').offsetWidth;
-		var currentButton = Math.floor(navbar.scrollLeft / buttonWidth) + 1;
-		var time = 500;
-		var currentPos = navbar.scrollLeft;
-		var finalPos = currentButton * buttonWidth;
-		var numIntervals = Math.ceil((finalPos -  currentPos) / rightDist);
-		var intervalTime = time/numIntervals;
-		var about = document.querySelector('#aboutContainer');
-		
-		snapping = window.setInterval(function() {
-			navbar.scrollLeft = navbar.scrollLeft + rightDist;
-		}, intervalTime);
-		delay = 1000;
-		window.setTimeout(function() {
-			window.clearInterval(snapping);
-			window.clearTimeout(stopping);
-			currentPos = navbar.scrollLeft;
-			if ((reveal && (buttonNum != currentButton)) || (about.dataset.inview == "in")) {
-				reveal_content(currentPos);
-			}
-			buttonNum = currentButton;
-			window.setTimeout(function() {
-				snapping = null;
-				delay = 100;
-				rightDist = 10;
-			    if (move_right) {scroll_right();}
-				else if (move_left) {scroll_left();}
-			}, 1000);
-		}, time)
-	}
-		
-    function snap_left(reveal = true) {
-		// reset the speed in the other direction
-		window.clearInterval(scrolling);
-		window.clearTimeout(stopping);
-		rightDist = 10;
-		
-		var navbar = document.getElementById('scroller');
-		const buttonWidth = document.getElementById('first').offsetWidth;
-		var currentButton = Math.floor(navbar.scrollLeft / buttonWidth) + 1;
-		var time = 500;
-		var currentPos = navbar.scrollLeft;
-		var finalPos = currentButton * buttonWidth - buttonWidth;
-		var numIntervals = Math.ceil((currentPos - finalPos) / leftDist);
-		var intervalTime = time/numIntervals;
-		var about = document.querySelector('#aboutContainer');
-		
-		snapping = window.setInterval(function() {
-			navbar.scrollLeft = navbar.scrollLeft - leftDist;
-		}, intervalTime);
-		delay = 1000;
-		window.setTimeout(function() {
-			window.clearInterval(snapping);
-			window.clearTimeout(stopping);
-			currentPos = navbar.scrollLeft;
-			if ((reveal && (buttonNum != currentButton - 1)) || (about.dataset.inview == "in")) {
-				reveal_content(currentPos);
-			}
-			buttonNum = currentButton - 1;
-			window.setTimeout(function() {
-				snapping = null;
-				delay = 100;
-				leftDist = 10;
-				if (move_left) {scroll_left();}
-				else if (move_right) {scroll_right();}
-			}, 1000);
-		}, time);
-	}
-		
-	function reveal_content(pos) {
-		var navbar = document.getElementById('scroller');
-		const buttonWidth = document.getElementById('first').offsetWidth;
-		var currentButton = Math.floor(pos / buttonWidth) + 1;
-		var leftButton = Math.floor(pos/buttonWidth);
-		var rightButton = Math.ceil(pos/buttonWidth);
-				
-		if ((pos - (leftButton * buttonWidth)) < ((rightButton * buttonWidth) - pos)) {
-			var buttonType = leftButton % 3;
-		}
-		else {
-			var buttonType = rightButton % 3;
-		}
-		
-		if (currentButton !== 1) {
-				switch (buttonType) {
-					case 1:
-						var link = document.getElementById("musicnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].getAttribute("href");
-						break;
-					case 2:
-						var link = document.getElementById("threednav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].getAttribute("href");
-						break;
-					case 0:
-						var link = document.getElementById("photosnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].getAttribute("href");
-						break;
+					$(".sidePanel").slideUp(750);
+					$(".content").fadeOut(750);
+					$("#aboutContainer").fadeIn(750);
 				}
 			}
 			else {
-				var link = document.getElementById("photosnav").getElementsByClassName("active")[0].getElementsByTagName("a")[0].getAttribute("href");
+				$(".section").fadeOut(1);
 			}
-		window.location.hash = link;
+			nextSection.fadeIn(750);
+		}
+		
+	function clickAnchor(anchorpoint) {
+		 var link = $('a[href="' + anchorpoint + '"]')
+		 link.click();
 	}
 		
+	function move_scroller() {
+		var navbar = document.getElementById('scroller');
+		
+		if (!loop_scroll()) {
+			navbar.scrollLeft = navbar.scrollLeft + vel;
+			vel += accel;
+		}
+		else {
+			loop_scroll();
+		}
+	}
+
+	// Scrolling functions
+	// Scroll by moving the position of the scroller element with constant acceleration
+
 	function scroll_to(pos, time=750) {
+		// uses built-in Jquery function
 		var navbar = $('#scroller');
 		const buttonWidth = document.getElementById('first').offsetWidth;
-		
+	
+		window.clearInterval(scrolling);
+		window.clearTimeout(stopping);
 		if (pos > buttonWidth * 6) {
 			navbar.scrollLeft = 0;
 			pos = pos - buttonWidth * 6;
 		} 
 		navbar.animate({'scrollLeft': pos}, time);
 	}
- 
-    function scroll_left() {
-		move_left = true;
-		move_right = false;
-		if (snapping == null) {
-			var navbar = document.getElementById('scroller');
+
+	function scroll_right(initialVel = 10) {
+		if (initialVel >= 0) {
+			vel = initialVel;
+			start_scroll();
+		}
+		else {
+			vel = initialVel * -1;
+			start_scroll();
+		}
+	}
+
+	function scroll_left(initialVel = -10) {
+		if (initialVel <= 0) {
+			vel = initialVel;
+			start_scroll();
+		}
+		else {
+			vel = initialVel * -1;
+			start_scroll();
+		}
+	}
 		
+	function start_scroll(acceleration = 3) {
+		if (snapping == null) {
 			window.clearInterval(scrolling);
 			window.clearTimeout(stopping);
-			rightDist = 10;
-			speed = 3;
-		
-			scrolling = window.setInterval(function() {
-				navbar.scrollLeft = navbar.scrollLeft - leftDist;
-				move_left = true;
-				leftDist += speed;
-				loop_scroll();
-        	}, delay);
-		}
-    }
- 
-    function scroll_right() {
-		move_right = true;
-		move_left = false;
-		if (snapping == null) {
-			var navbar = document.getElementById('scroller');
-		
-			window.clearInterval(scrolling);
-			window.clearTimeout(stopping);
-			leftDist = 10;
-			speed = 3;
-		
-			scrolling = window.setInterval(function() {
-				navbar.scrollLeft = navbar.scrollLeft + rightDist;
-				move_right = true;
-				rightDist += speed;
-				loop_scroll();
-        	}, delay);
-		}
-    }
-		
-	function loop_scroll() {
-		var buttonWidth = document.getElementById('first').offsetWidth;
-		var navbar = document.getElementById('scroller');
-		console.log(navbar.scrollLeft)
-		
-		if (navbar.scrollLeft <= 10) {
-				navbar.scrollLeft = buttonWidth * 6;
+			if (vel  >= 0) {
+				accel = acceleration;
 			}
-		else if (navbar.scrollLeft > (buttonWidth * 6 - 100)) {
-					navbar.scrollLeft = 0;
-				}
+			else if (vel < 0) {
+				accel = -acceleration;
+			}
+			scrolling = window.setInterval(move_scroller, delay);
+		}
 	}
 		
 	function stop_scroll() {
+		// slows down before snapping onto a button edge
+		var navbar = document.getElementById('scroller');
+		
 		window.clearInterval(scrolling);
 		if (snapping == null) {
-			var navbar = document.getElementById('scroller');
-			var time = 100
-			var currentPos = navbar.scrollLeft;
-			delay = 100;
-		
-			// Going left
-			if (leftDist > rightDist) {
-				time = Math.floor(leftDist/speed) * 100 + 100
-			
-				navbar.scrollLeft = navbar.scrollLeft - leftDist;
-			
-				scrolling = window.setInterval(function() {
-					navbar.scrollLeft = navbar.scrollLeft - leftDist;
-					leftDist -= speed;
-					loop_scroll();
-				}, delay);
-			}
-		
-			// Going right
-			else if (rightDist > leftDist) {
-				time = Math.floor(rightDist/speed) * 100 + 100
-				var buttonWidth = document.getElementById('first').offsetWidth;
-			
-				navbar.scrollLeft = navbar.scrollLeft + rightDist;
-			
-				scrolling = window.setInterval(function() {
-					navbar.scrollLeft = navbar.scrollLeft + rightDist;
-					rightDist -= speed;
-					loop_scroll();
-				}, 100);
-			}
-			
-			stopping = window.setTimeout(function() {
-				var finalPos = navbar.scrollLeft;
+			var time = Math.abs(Math.floor(vel/accel)) * 100 + 100;
+			navbar.scrollLeft = navbar.scrollLeft + vel;
+			start_scroll(-3);
+			stopping = window.setTimeout(function(){
 				window.clearInterval(scrolling);
-				leftDist = 10;
-				rightDist = 10;
-				speed = 3;
-				snap_to(0);
-				move_left = false;
-				move_right = false;
-			}, time)
+				scrolling = null;
+				accel = 3;
+				snap_nearest(0);
+			}, time);
 		}
 		else {
-			move_left = false;
-			move_right = false;
+			scrolling = null;
 		}
-    }
+	}
 		
-	function bringIn(section) {
-		var content = section.parent();
-		var sidePanel = content.find(".sidePanel")
-			
-		section.css("opacity", 0);
-		content.css({display:"flex"});
-		sidePanel.hide();
-		if (content.find(".slideOut").text().trim() == "»") {
-			sidePanel.css("opacity", 0.1);
+	function loop_scroll() {
+		var navbar = document.getElementById('scroller');
+		var buttonWidth = navbar.scrollWidth / 9;
+		var left_bound = 11;
+		var right_bound = buttonWidth * 6 - 100;
+		
+		if (navbar.scrollLeft < left_bound) {
+			navbar.scrollLeft = right_bound;
+			return true;
+		}
+		else if (navbar.scrollLeft > right_bound) {
+			navbar.scrollLeft = left_bound;
+			return true;
+		}
+		return false;
+	}
+	
+	// Snapping functions
+	// Snapping is moving the position of the scroller element with constant velocity to the edge of a button
+				
+	function snap_to(buttonIndex, velocity = 75, reveal = true) {
+		var navbar = document.getElementById('scroller');
+		var currentPos = navbar.scrollLeft;
+		var currentIndex = getIndexFromPos(currentPos);
+		const buttonWidth = navbar.scrollWidth / 9;
+		var currentButton = Math.floor(navbar.scrollLeft / buttonWidth);
+		const numOfButtons = Object.keys(navButtons).length;
+		var buttonDistance = buttonIndex - 1 - currentIndex;
+		var maxDistance = Math.floor(numOfButtons / 2);
+		
+		// logic to find the distance to the nearest button
+		// considering that the set of buttons are repeated infinitely on the right and left
+		if (Math.abs(buttonDistance) > maxDistance) {
+			if (buttonDistance > 0) {
+				buttonDistance = buttonDistance - numOfButtons;
+			}
+			else {
+				buttonDistance = buttonDistance + numOfButtons;
+				velocity = velocity * -1;
+			};
+		};
+		var offset = currentPos - (currentButton + 1) * buttonWidth;
+		var finalPos = currentPos + buttonDistance * buttonWidth - offset;
+		snap(finalPos, velocity, reveal);
+	}
+		
+	function snap_nearest(override = 0, speed = 65, reveal = true) {
+		window.clearInterval(scrolling);
+		window.clearTimeout(stopping);
+		window.clearInterval(snapping);
+		
+		var navbar = document.getElementById('scroller');
+		var currentPos = navbar.scrollLeft;
+		const buttonWidth = document.getElementById('scroller').scrollWidth / 9;
+		var currentButton = Math.floor(navbar.scrollLeft / buttonWidth) + 1;
+		var offset = currentPos - (currentButton - 1) * buttonWidth;
+		var finalPos = null;
+		
+		if (override > 0) {
+			// snap right
+			finalPos = buttonWidth * (currentButton);
+		}
+		else if (override < 0) {
+			// snap left
+			finalPos = currentPos - offset;
 		}
 		else {
-			sidePanel.css("opacity", 1);
+			//no override
+			if (offset >= buttonWidth / 2) {
+				// snap right
+				finalPos = buttonWidth * (currentButton);
+			}
+			else {
+				// snap left
+				finalPos = currentPos - offset;
+			}
 		}
-		sidePanel.slideDown(1500);
-		section.animate({opacity:1}, 750);
-	};
+		if (finalPos !== null) {
+			snap(finalPos, speed, reveal);
+		}
+	}
 		
-	function hoverAnimStart(animateObj) {
-//		animateObj.animate({'padding-right': 20}, 800, 'swing');
-//		animateObj.promise.done(function () {
-//			console.log("callback");
-//			}
-//		);
-//		hover = window.setInterval(function () {
-		console.log("mouse hover");
-		console.log(animateObj.css("padding-right"));
-		animateObj.css("padding-right", 20);
-		window.setTimeout( function() {
-			console.log("callback");
-			console.log(animateObj.css("padding-right"));
-			animateObj.css("padding-right", 0);
-		}, 800);
-//		}, 1600);
-	 }
+	function snap(pos, speed=75, reveal=true) {
+		var navbar = document.getElementById('scroller');
+		var currentPos = navbar.scrollLeft;
+		if ((pos > currentPos && speed < 0) || (pos < currentPos && speed > 0)) {
+			speed = speed * -1;
+		}
+		var time = Math.floor((pos - currentPos) / speed * delay);
+		accel = 0;
+		vel = speed;
+		snapping = window.setInterval(move_scroller, delay);
+		stopping = window.setTimeout(function() {
+			window.clearInterval(snapping);
+			navbar.scrollLeft = pos;
+			snapping = null;
+			accel = 3;
+			vel = 0;
+			if (reveal) {
+				reveal_content(pos);
+			}
+		}, time);
+	}
+	
+	// Getters
+	// Button index is a variable that shares a relationship between scroll position and viewable content 
+	
+	function getIndexFromAnchor(anchorpoint) {
+		var section = $("a[name='" + anchorpoint + "']").parent();
+		var key = section.parent().attr('id');
+		
+		for (i in navButtons) {
+			if (navButtons[i] == key) {
+				return i;
+			}
+		}
+	}
+		
+	function getIndexFromPos(pos) {
+		var navbar = document.getElementById('scroller');
+		if (pos == undefined) {
+			pos = navbar.scrollLeft;
+		}
+		const buttonWidth = navbar.scrollWidth / 9;
+		var currentButton = Math.floor(pos / buttonWidth);
+		const numOfButtons = Object.keys(navButtons).length;
+		return currentButton % numOfButtons;
+	}
+		
+	function getPanelFromIndex(index) {
+		var panelId = navButtons[index].replace("Container", "nav");
+		return $("#" + panelId);
+	}
 		
 	$("document").ready(function main() {
 	var $scroller = $("#scroller");
@@ -318,18 +325,19 @@
 	
 	// scroll to middle of scroller and fade in content
 	$scroller.animate({'scrollLeft': $("#start").position().left}, 1000);
-	$("#aboutContainer").fadeIn(1000);
+	if(window.location.hash) {
+  		var buttonIndex = getIndexFromAnchor(location.hash.slice(1));
+		snap_to(buttonIndex, 75, false);
+		reveal_section(location.hash.slice(1));
+	} else {
+  		$("#aboutContainer").fadeIn(1000);
+	}
 		
 	$scrollButtons.on('click', function () {
-        var scrollTo = $(this).parent().position().left + $scroller.scrollLeft();
+    	var scrollTo = $(this).parent().position().left + $scroller.scrollLeft();
 		var scrollType = $(this).parent();
-		
-		window.clearInterval(scrolling);
-		window.clearTimeout(stopping);
-		leftDist = 10;
-		rightDist = 10;
-		speed = 3;
-        scroll_to(scrollTo, 750);
+	
+    	scroll_to(scrollTo, 750);
 		if (scrollType.hasClass("photoButton")) {
 			$("#photosnav").find("li.active").children("a")[0].click();
 			if ($("#photosContainer").attr("data-inview") == "in" && $("#photosContainer .slideOut").text().trim() != "»") {
@@ -417,7 +425,6 @@
 		var sidePanel = $(this).parent();
 		var sections = sidePanel.parent().find(".section");
 		var innerText = $(this).text().trim();
-		console.log(innerText);
 		
 		// Resize padding
 		$(this).css("top", "calc(50% - 80px)");
@@ -450,46 +457,17 @@
 		clearInterval(hoverInterval);
     });
 		
-	$("body")[0].onhashchange = function() {
-		var anchorpoint = location.hash.slice(1);
-		var currcontent = $("div[data-inview='in']");
-		var currcontentLinks = currcontent.find("a");
-		var inside = false;
-		var nextSection = $("a[name=" + anchorpoint + "]").parent();
-		var nextSidepanel = $("a[href='" + location.hash + "']").parent().parent().parent();
-		
-		if (anchorpoint !== "about") {
-			nextSidepanel.find("li.active").removeClass("active");
-			$("a[href='" + location.hash + "']").parent().addClass("active");
-		}
-		
-		// check to see if section is in displayed container
-		currcontentLinks.each(function(index, value){
-  			if (this.name == anchorpoint) {
-				inside = true;
-				return $("this").parent();
-  			};
-		});
-		if (inside !== true) {
-			nextSection.parent().attr("data-inview", "in")
-			currcontent.attr("data-inview", "out")
-			if (anchorpoint !== "about") {
-				$(".sidePanel").css("opacity", 0); // change to previously active sidePanel
-				$(".content").fadeOut(750);
-				bringIn(nextSection);
+	$("body")[0].onhashchange = function () {
+		if (location.hash.slice(1)) {
+			
+			var buttonIndex = getIndexFromAnchor(location.hash.slice(1));
+			if (buttonIndex !== getIndexFromPos()) {
+				snap_to(buttonIndex, 75, false);	
 			}
-			else {
-				$(".sidePanel").slideUp(750);
-				$(".content").fadeOut(750);
-				$("#aboutContainer").fadeIn(750);
-			}
+			reveal_section(location.hash.slice(1));
 		}
-		else {
-			$(".section").fadeOut(1);
-		}
-		nextSection.fadeIn(750);
 	};
-	});
+});
 	</script>
 </head>	
 <body>
@@ -503,10 +481,10 @@
 			<img class="previewContent" id="img01" alt="preview">
 		</div>
 		<div class="navbar">
-			<button type="button" onmouseover="scroll_left();" onmouseout="stop_scroll();" onClick="snap_to(-1);" id="leftScroll">&lt;</button>
+			<button type="button" onmouseover="scroll_left();" onmouseout="stop_scroll();" onClick="snap_nearest(-1);" id="leftScroll">&lt;</button>
 				<div class="buttonContainer" id="scroller">
 					<div class="photoButton" id="first"><button type="button">Photography</button></div>
-					<div class="musicButton"><button type="button">Music</button></div>
+					<div class="musicButton" id="second"><button type="button">Music</button></div>
 					<div class="threedButton"><button type="button">3D Art</button></div>
 					<div class="photoButton" id="start"><button type="button">Photography</button></div>
 					<div class="musicButton"><button type="button">Music</button></div>
@@ -515,7 +493,7 @@
 					<div class="musicButton"><button type="button">Music</button></div>
 					<div class="threedButton"><button type="button" id="last">3D Art</button></div>
 				</div>
-			<button type="button" onmouseover="scroll_right();" onmouseout="stop_scroll();" onClick="snap_to(1);" id="rightScroll">&gt;</button>
+			<button type="button" onmouseover="scroll_right();" onmouseout="stop_scroll();" onClick="snap_nearest(1);" id="rightScroll">&gt;</button>
 		</div>
 		<div class="content" id="aboutContainer" data-inview="in">
 		<div class="section" id="about">
@@ -529,7 +507,7 @@
 				</ul></p>
 				<h1>About</h1>
 				<p>Eric Barrett is an artist from the island of Newfoundland. He talks to himself a lot but if you tell him that he’ll claim it’s thinking out loud. He’ll also say he doesn’t snore, which is also a blatant lie. He failed out of computer engineering to pursue his dream of creating stuff. Since he was a kid he has wanted to develop video games. He's also obviously a very talented web designer and hey, He’s not that bad with a camera either. If you happen to want to hire him for anything contact him at: neverloiter@gmail.com. </p>
-				<h1>What does this site offer?</h1>
+				<h1>What Does this Site Offer?</h1>
 				<p>Currently there are some pretty pictures, ametaur music, and some CSGO Skins. But in the future I want to bring so much more. Further down the road <strong>I want to do cool stuff</strong> like develop <strong><u>a video game</u></strong>, release <strong><u>a DnD setting</u></strong>, design <strong><u>clothes</u></strong>, release <strong><u>an album</u></strong>, and get into <strong><u>comedy and film/acting.</u></strong></p>
 				<h1>What is No Loitering?</h1>
 				<p>2 kids and a dream</p>
