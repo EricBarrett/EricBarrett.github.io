@@ -7,54 +7,56 @@
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script type="text/javascript">
+	var navButtons = {
+		0: "photoContainer",
+		1: "musicContainer",
+		2: "threedContainer"
+	};
 		
 	function unselectAll() {
-		$(".photoButton").parent().css({"opacity":"0.8", "background-color":"#000", "border-color":"rgba(255,255,255,1)"});
-		$(".musicButton").parent().css({"opacity":"0.8", "background-color":"#000", "border-color":"rgba(255,255,255,1)"});
-		$(".threedButton").parent().css({"opacity":"0.8", "background-color":"#000", "border-color":"rgba(255,255,255,1)"});
+		$(".photoButton").css({"opacity":"0.9", "background-color":"#000", "border-color":"rgba(255,255,255,1)"});
+		$(".musicButton").css({"opacity":"0.9", "background-color":"#000", "border-color":"rgba(255,255,255,1)"});
+		$(".threedButton").css({"opacity":"0.9", "background-color":"#000", "border-color":"rgba(255,255,255,1)"});
 	}
 		
-	function select(butt) {
-		butt.parent().css({"opacity":"0.3", "background-color":"#1A1A1A", "border-color":"rgba(26,26,26,0.3)"});
+	function getButtonFromIndex (buttonIndex) {
+		var buttonClass = navButtons[buttonIndex].replace("Container", "Button");
+		return $("." + buttonClass);
+	}
+		
+	function scroll_to(anchorpoint) {
+		if (anchorpoint !== "about") {
+				$("#aboutContainer").fadeOut(750);
+				$(".scrollContainer").fadeIn(750);
+				var nextSection = $('a[name="' + anchorpoint + '"]').parent();
+				var nextContent = nextSection.parent();
+				var numOfButtons = Object.keys(navButtons).length;
+				unselectAll();
+				for (i in navButtons) {
+					if (navButtons[i] == nextContent.attr("id")) {
+						console.log(i);
+						console.log(navButtons[i]);
+						console.log(nextContent.attr("id"));
+						var x = $(window).width() * i;
+						getButtonFromIndex(i).css({"opacity":"0.3", "background-color":"#1A1A1A", "border-color":"rgba(26,26,26,0.3)"});
+						$('.scrollContainer').scrollLeft(x);
+					}
+				}
+			}
+			else if (anchorpoint == "about") {
+				$(".scrollContainer").fadeOut(750);
+				$("#aboutContainer").fadeIn(750);
+			}
 	}
 
 	$("document").ready(function main() {
 		var $scrollButtons = $('.buttonContainer').children('button');
-
-		console.log($(".scrollContainer").css("height"));
-		$(".scrollContainer").hide();
-		$("#aboutContainer").fadeIn(1000);
-    
-		$scrollButtons.on('click', function () {
-			var scrollType = $(this).children("div");
-			var nav = $('.scrollContainer');
-			var anchorpoint = location.hash.slice(1);
-			
-			if (scrollType.hasClass("photoButton")) {
-				if (anchorpoint !== "nationalpark") {
-					window.location.hash = "nationalpark";	
-				}
-				else {
-					$('.scrollContainer').scrollLeft(0);
-				}
-			}
-			if (scrollType.hasClass("musicButton")) {
-				if (anchorpoint !== "albumsingles") {
-					window.location.hash = "albumsingles";	
-				}
-				else {
-					$('.scrollContainer').scrollLeft($(window).width());
-				}
-			}
-			if (scrollType.hasClass("threedButton")) {
-				if (anchorpoint !== "csgo") {
-					window.location.hash = "csgo";	
-				}
-				else {
-					$('.scrollContainer').scrollLeft(9999);
-				}
-			}
-		});
+		if(window.location.hash) {
+			scroll_to(window.location.hash)
+		} else {
+  			$(".scrollContainer").hide();
+			$("#aboutContainer").fadeIn(1000);
+		}
 		
 		$(".spoilerToggle").find("button").on('click', function () {
 			var innerText = $(this).text().trim();
@@ -75,42 +77,7 @@
 		});	
 	
 		$("body")[0].onhashchange = function() {
-			var anchorpoint = location.hash.slice(1);
-			var currcontent = $("div[data-inview='in']");
-			var currcontentLinks = currcontent.find("a");
-			var inside = false;
-			var nextSection = $("a[name=" + anchorpoint + "]").parent();
-			
-			if (anchorpoint == "about") {
-				$(".scrollContainer").fadeOut(750);
-				$("#aboutContainer").fadeIn(750);
-			}
-			else {
-				$("#aboutContainer").fadeOut(750);
-				$(".scrollContainer").fadeIn(750);
-			}
-			
-			console.log(nextSection.parent().attr("id"));
-			switch(nextSection.parent().attr("id")) {
-				case "aboutContainer":
-					unselectAll();
-					break;
-				case "photosContainer":
-					unselectAll();
-					select($(".photoButton"));
-					$('.scrollContainer').scrollLeft(0);
-					break;
-				case "musicContainer":
-					unselectAll();
-					select($(".musicButton"));
-					$('.scrollContainer').scrollLeft($(window).width());
-					break;
-				case "threedContainer":
-					unselectAll();
-					select($(".threedButton"));
-					$('.scrollContainer').scrollLeft(9999);
-					break;
-			}
+			scroll_to(location.hash.slice(1));
 		}
 	});
 	</script>
@@ -122,9 +89,9 @@
 	<br>
 	<div class="navbar">
 		<div class="buttonContainer">
-			<button type="button" id="first"><div class="photoButton">Photography</div></button>
-			<button type="button"><div class="musicButton">Music</div></button>
-			<button type="button" id="last"><div class="threedButton">3D Art</div></button>
+			<div class="photoButton"><a href="#nationalpark">Photography</a></div>
+			<div class="musicButton"><a href="#albumsingles">Music</a></div>
+			<div class="threedButton"><a href="#csgo">3D Art</a></div>
 		</div>
 	</div>
 	<div class="content" id="aboutContainer" data-inview="in">
@@ -151,7 +118,7 @@
 	</div>
 	</div>
 	<div class="scrollContainer">
-	<div class="content" id="photosContainer" data-inview="out">
+	<div class="content" id="photoContainer" data-inview="out">
 		<div class="section" id="trailpics">
 			<a name="nationalpark" target="_top">
 			<h1 class="sectionHead">Gros Morne</h1>
