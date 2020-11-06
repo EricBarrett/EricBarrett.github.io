@@ -11,7 +11,14 @@
 		0: "photoContainer",
 		1: "musicContainer",
 		2: "threedContainer"
-	};
+	}
+	var scr = {
+        initPos: [0, 0],    //Initial Mouse Position
+        cPos: [0, 0],       //Current Mouse Position
+        locked: 0,          //A direction is locked
+        timeout: 0,         //Scroll timeout counter
+    }
+	var endOfScroll = null;
 		
 	function unselectAll() {
 		$(".photoButton").css({"opacity":"0.9", "background-color":"#000", "border-color":"rgba(255,255,255,1)"});
@@ -24,30 +31,150 @@
 		return $("." + buttonClass);
 	}
 		
-	function scroll_to(anchorpoint) {
-		if (anchorpoint !== "about") {
-				$("#aboutContainer").fadeOut(750);
-				$(".scrollContainer").fadeIn(750);
-				var nextSection = $('a[name="' + anchorpoint + '"]').parent();
-				var nextContent = nextSection.parent();
-				var numOfButtons = Object.keys(navButtons).length;
-				unselectAll();
-				for (i in navButtons) {
-					if (navButtons[i] == nextContent.attr("id")) {
-						console.log(i);
-						console.log(navButtons[i]);
-						console.log(nextContent.attr("id"));
-						var x = $(window).width() * i;
-						getButtonFromIndex(i).css({"opacity":"0.3", "background-color":"#1A1A1A", "border-color":"rgba(26,26,26,0.3)"});
-						$('.scrollContainer').scrollLeft(x);
-					}
-				}
+	function getAnchorFromPos(left, top) {
+		var visible = [];
+		var currContent = "aboutContainer";
+		if (left == undefined) {
+			left = document.getElementsByClassName("scrollContainer")[0].scrollLeft;
+		}
+		if (top == undefined) {
+			top = document.getElementsByClassName("scrollContainer")[0].scrollTop;
+		}
+		for (var key in navButtons) {
+			var value = navButtons[key];
+			if (document.getElementById(value).style.display === "flex") {
+				visible.push(value);
 			}
-			else if (anchorpoint == "about") {
-				$(".scrollContainer").fadeOut(750);
-				$("#aboutContainer").fadeIn(750);
-			}
+		}
+		if (left < $(".content").width()) {
+			currContent = visible[0];
+		}
+		else if (left <= $(".content").width() * 2) {
+			currContent = visible[1];
+		}
+		else if (visible.length > 2) {
+			currContent = visible[2];
+		}
+		var anchors = $("#" + currContent).find("a");
+		return anchors.attr("name");
 	}
+		
+	function displayAdjContent(anchorpoint) {
+		if (anchorpoint == undefined) {
+			anchorpoint = window.location.hash.slice(1);
+		}
+		var nextSection = $("a[name='" + anchorpoint + "']").parent();
+        var nextContent = nextSection.parent();
+		var index = -1;
+		var indices = [];
+		for (i in navButtons) {
+			if (navButtons[i] == nextContent.attr("id")) {
+				index = i;
+				document.getElementById(navButtons[i]).style.display = "flex";
+			}
+			else {
+				document.getElementById(navButtons[i]).style.display = "none";
+			}
+		}
+		// content on the left
+		if (index > 0) {
+			indices[0] = index - 1;
+		}
+		// content on the right
+		if (index != Object.keys(navButtons).length - 1) {
+			indices.push(Number(index) + 1);
+		}
+		
+		if (index == -1) {
+			$(".scrollContainer").fadeOut(750);
+			$("#aboutContainer").fadeIn(750);
+			
+			return undefined;
+		}
+		else {
+			$("#aboutContainer").fadeOut(750);
+			$(".scrollContainer").fadeIn(750);
+			for (x of indices) {
+				document.getElementById(navButtons[x]).style.display = "flex";
+			}
+			
+			return index;
+		}
+	}
+		
+	function scroll_to(index) {
+		unselectAll();
+		if (index == undefined) {
+			console.log("scrolling to about section since no index was provided");
+			$(".scrollContainer").fadeOut(750);
+			$("#aboutContainer").fadeIn(750);
+		}
+		else {
+			var pos = $(window).width() * index;
+			$('.scrollContainer').scrollLeft(pos);
+			// style button so that it appears to have been clicked
+			getButtonFromIndex(index).css({"opacity":"0.3", "background-color":"#1A1A1A", "border-color":"rgba(26,26,26,0.3)"});
+		}
+	}
+	
+	function lockdir(element) {
+		if (element == undefined) {
+			element = document.getElementsByClassName("scrollContainer");
+		}
+		
+        scr.timeout = 0;    //Keep scroll counter at 0 while scrolling
+
+        //Get the current mouse position and find difference to initial position
+        scr.cPos = [
+            element.scrollTop,
+            element.scrollLeft
+        ];
+        var dif = [
+            Math.abs(scr.cPos[0] - scr.initPos[0]),
+            Math.abs(scr.cPos[1] - scr.initPos[1])
+        ];
+
+
+        //If no direction is locked (0), lock direction moved least when scrolling started
+        if (scr.locked === 0) {
+
+            if (dif[1] > dif[0]){
+                scr.locked = 2;     //Lock Vertical Scrolling
+            }
+			else {
+                scr.locked = 1;     //Lock Horizontal Scrolling
+            }
+        }
+
+
+        //Reset Locked Direction to initial value
+        if (scr.locked === 1) {
+            element.scrollLeft = scr.initPos[1];
+        }
+		else {
+           element.scrollTop = scr.initPos[0];
+        }
+		
+		// if the user swiped to a new section, change to that section
+		if (endOfScroll !== null) {
+			clearTimeout(endOfScroll); // reset timeout if still scrolling
+		}
+		endOfScroll = window.setTimeout(function () {
+			var currAnchor = getAnchorFromPos();
+			if (currAnchor != window.location.hash.slice(1) && currAnchor !== undefined) {
+				window.location.hash = currAnchor;
+			}
+		}, 500);
+    }
+		
+	function cancelLock(){
+        if (scr.timeout > 25) {
+            scr.locked = 0;
+            scr.initPos = scr.cPos;
+        }
+
+        scr.timeout++;
+    }
 
 	$("document").ready(function main() {
 		var $scrollButtons = $('.buttonContainer').children('button');
@@ -57,6 +184,7 @@
   			$(".scrollContainer").hide();
 			$("#aboutContainer").fadeIn(1000);
 		}
+		window.setInterval(cancelLock, 1);
 		
 		$(".spoilerToggle").find("button").on('click', function () {
 			var innerText = $(this).text().trim();
@@ -77,7 +205,8 @@
 		});	
 	
 		$("body")[0].onhashchange = function() {
-			scroll_to(location.hash.slice(1));
+			var index = displayAdjContent(location.hash.slice(1));
+			scroll_to(index);
 		}
 	});
 	</script>
@@ -117,7 +246,7 @@
 		</a>
 	</div>
 	</div>
-	<div class="scrollContainer">
+	<div class="scrollContainer" onscroll="lockdir()">
 	<div class="content" id="photoContainer" data-inview="out">
 		<div class="section" id="trailpics">
 			<a name="nationalpark" target="_top">
