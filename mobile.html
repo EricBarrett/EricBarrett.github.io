@@ -179,7 +179,8 @@
 	$("document").ready(function main() {
 		var $scrollButtons = $('.buttonContainer').children('button');
 		if(window.location.hash) {
-			scroll_to(window.location.hash)
+			var index = displayAdjContent(location.hash.slice(1));
+			scroll_to(index);
 		} else {
   			$(".scrollContainer").hide();
 			$("#aboutContainer").fadeIn(1000);
