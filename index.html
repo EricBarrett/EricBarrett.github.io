@@ -57,12 +57,13 @@
 			});
 			// switch inview data if section is outside of displayed content
 			if (inside !== true) {
-				nextSection.parent().attr("data-inview", "in")
-				currcontent.attr("data-inview", "out")
+				nextContent.attr("data-inview", "in");
+				currcontent.attr("data-inview", "out");
 				// change out sidePanel and content
 				if (anchorpoint !== "about") {
 					$(".sidePanel").css("opacity", 0);
 					$(".content").fadeOut(750);
+					$(".section").fadeOut(1);
 					nextSection.css("opacity", 0);
 					nextContent.css({display:"flex"});
 					nextSidePanel.hide();
@@ -363,9 +364,10 @@
 	
 	// scroll to middle of scroller and fade in content
 	$scroller.animate({'scrollLeft': $("#start").position().left}, 1000);
-	if(window.location.hash) {
-  		var buttonIndex = getIndexFromAnchor(location.hash.slice(1));
-		callback = function () {reveal_section(location.hash.slice(1));}
+	if(window.location.hash && location.hash.slice(1) !== "about") {
+		var anchorpoint = location.hash.slice(1);
+  		var buttonIndex = getIndexFromAnchor(anchorpoint);
+		callback = function () {reveal_section(anchorpoint);}
 		snap_to(buttonIndex, undefined, callback);
 	} else {
   		$("#aboutContainer").fadeIn(1000);
