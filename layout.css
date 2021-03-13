@@ -72,7 +72,7 @@ a[href]:active {
 }
 
 #leftScroll {
-	background: rgba(0,0,0,0.8);
+	background: rgba(0,0,0,0);
 	position: absolute;
 	display: block;
 	z-index: 2;
@@ -87,7 +87,7 @@ a[href]:active {
 }
 
 #rightScroll {
-	background: rgba(0,0,0,0.8);
+	background: rgba(0,0,0,0);
 	position: absolute;
 	display: block;
 	width: 12.5%;
@@ -154,14 +154,14 @@ a[href]:active {
 }
 
 .buttonContainer button:hover {
-	opacity: .3;
+	opacity: .5;
 	background-color: #1A1A1A;
 	color: white;
 }
 
 .buttonContainer::-webkit-scrollbar { width: 0 }
 
-.photoButton, .musicButton, .threedButton {
+.photosButton, .musicButton, .threedButton {
 	flex: 0 0 auto;
 	box-sizing: border-box;
 	position: relative;
@@ -203,6 +203,7 @@ a[href]:active {
 
 .sidePanel li {
 	marigin: 10px 0px;
+	color: rgba(100,100,100,1);
 }
 
 .testPanel li {

@@ -104,12 +104,6 @@ a[href]:active {
 	color: inherit;
 }
 
-.buttonContainer a:hover {
-	opacity: .3 !important;
-	background-color: #1A1A1A !important;
-	color: white !important;
-}
-
 .buttonContainer::-webkit-scrollbar { width: 0 }
 
 .scrollContainer {

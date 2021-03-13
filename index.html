@@ -25,6 +25,14 @@
 			animateObj.css("padding-right", 0);
 		}, 800);
 	 }
+		
+	function highlight_new_button(index) {
+		$('.buttonContainer').find('div').css({"opacity": "0.8"})
+		$('.buttonContainer').find('button').css({"box-shadow": "none"});
+		var selected = getButtonFromIndex(index);
+		selected.css({"opacity": "0.5"});
+		selected.find("button").css({"box-shadow": "0px 0px 15px 10px #AAAAAA inset"});
+	}
 
 	function reveal_content(pos) {
 		var buttonIndex = getIndexFromPos(pos);
@@ -61,6 +69,7 @@
 				currcontent.attr("data-inview", "out");
 				// change out sidePanel and content
 				if (anchorpoint !== "about") {
+					highlight_new_button(getIndexFromAnchor(anchorpoint));
 					$(".sidePanel").css("opacity", 0);
 					$(".content").fadeOut(750);
 					$(".section").fadeOut(1);
@@ -77,6 +86,8 @@
 					nextSection.animate({opacity:1}, 750);
 				}
 				else {
+					$('.buttonContainer').find('div').css({"opacity": "0.8"})
+					$('.buttonContainer').find('button').css({"box-shadow": "none"});
 					$(".sidePanel").slideUp(750);
 					$(".content").fadeOut(750);
 					$("#aboutContainer").fadeIn(750);
@@ -110,9 +121,9 @@
 
 	function scroll_to(pos, initialVel=100, callback=null) {
 		// only scrolls right
-		console.log(callback);
 		var navbar = document.getElementById("scroller");
 		const buttonWidth = document.getElementById('first').offsetWidth;
+
 		if (pos > buttonWidth * 6) {
 			navbar.scrollLeft = 0;
 			pos = pos - buttonWidth * 6;
@@ -127,7 +138,6 @@
 			0: (-1 * vel + Math.sqrt(vel * vel + (2 * accel * distance))) / (accel * 0.5),
 			1: (-1 * vel - Math.sqrt(vel * vel + (2 * accel * distance))) / (accel * 0.5)
 		}
-		console.log(time);
 		if (time[0] > 0) {
 			time = time[0] * delay / 2; // hack that kind of works for some reason (as long as the position is set in the callback)
 		}
@@ -299,6 +309,7 @@
 		var currentPos = navbar.scrollLeft;
 		var numOfButtons = Object.keys(navButtons).length;
 		var buttonWidth = document.getElementById('scroller').scrollWidth / ( numOfButtons * 3);
+		
 		// It is not possible to scroll past the first button one the last set 
 		if (pos >= buttonWidth * (numOfButtons * 2 + 1)) {
 			pos = pos - buttonWidth * 3;
@@ -327,12 +338,17 @@
 	// Button index is a variable that shares a relationship between scroll position and viewable content 
 	
 	function getIndexFromAnchor(anchorpoint) {
-		var section = $("a[name='" + anchorpoint + "']").parent();
-		var key = section.parent().attr('id');
-		for (i in navButtons) {
-			if (navButtons[i] == key) {
-				return i;
-			}
+		if (anchorpoint == "about") {
+			return null;
+		}
+		else {
+			var section = $("a[name='" + anchorpoint + "']").parent();
+			var key = section.parent().attr('id');
+			for (i in navButtons) {
+				if (navButtons[i] == key) {
+					return i;
+				}
+			}	
 		}
 	}
 		
@@ -346,10 +362,15 @@
 		const numOfButtons = Object.keys(navButtons).length;
 		return currentButton % numOfButtons;
 	}
-		
+			
 	function getPanelFromIndex(index) {
 		var panelId = navButtons[index].replace("Container", "nav");
 		return $("#" + panelId);
+	}
+		
+	function getButtonFromIndex(index) {
+		var buttonClass = navButtons[index].replace("Container", "Button")
+		return $("." + buttonClass);
 	}
 		
 	$("document").ready(function main() {
@@ -378,7 +399,7 @@
 		var scrollType = $(this).parent();
 		
 		callback = function () {
-			if (scrollType.hasClass("photoButton")) {
+			if (scrollType.hasClass("photosButton")) {
 				$("#photosnav").find("li.active").children("a")[0].click();
 				if ($("#photosContainer").attr("data-inview") == "in" && $("#photosContainer .slideOut").text().trim() != "»") {
 					$("#photosnav").slideToggle(750);
@@ -502,13 +523,13 @@
 		
 	$("body")[0].onhashchange = function () {
 		if (location.hash.slice(1)) {
-			
 			var buttonIndex = getIndexFromAnchor(location.hash.slice(1));
-			if (buttonIndex !== getIndexFromPos()) {
+			
+			if (buttonIndex !== null && buttonIndex !== getIndexFromPos()) {
 				snap_to(buttonIndex, undefined, reveal_section);
 			}
 			else {
-				reveal_section(location.hash.slice(1));	
+				reveal_section(location.hash.slice(1));
 			}
 		}
 	};
@@ -528,13 +549,13 @@
 		<div class="navbar">
 			<button type="button" onmouseover="scroll_left();" onmouseout="stop_scroll();" onClick="snap_nearest(-1);" id="leftScroll">&lt;</button>
 				<div class="buttonContainer" id="scroller">
-					<div class="photoButton" id="first"><button type="button">Photography</button></div>
+					<div class="photosButton" id="first"><button type="button">Photography</button></div>
 					<div class="musicButton" id="second"><button type="button">Music</button></div>
 					<div class="threedButton"><button type="button">3D Art</button></div>
-					<div class="photoButton" id="start"><button type="button">Photography</button></div>
+					<div class="photosButton" id="start"><button type="button">Photography</button></div>
 					<div class="musicButton"><button type="button">Music</button></div>
 					<div class="threedButton"><button type="button">3D Art</button></div>
-					<div class="photoButton"><button type="button">Photography</button></div>
+					<div class="photosButton"><button type="button">Photography</button></div>
 					<div class="musicButton"><button type="button">Music</button></div>
 					<div class="threedButton"><button type="button" id="last">3D Art</button></div>
 				</div>
