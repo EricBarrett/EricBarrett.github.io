@@ -16,7 +16,8 @@
 	var navButtons = {
 		0: "photosContainer",
 		1: "musicContainer",
-		2: "threedContainer"
+		2: "threedContainer",
+		3: "gamesContainer"
 	};
 		
 	function hoverAnimStart(animateObj) {
@@ -123,10 +124,11 @@
 		// only scrolls right
 		var navbar = document.getElementById("scroller");
 		const buttonWidth = document.getElementById('first').offsetWidth;
+		var numOfButtons = Object.keys(navButtons).length;
 
-		if (pos > buttonWidth * 6) {
+		if (pos > buttonWidth * numOfButtons * 2) {
 			navbar.scrollLeft = 0;
-			pos = pos - buttonWidth * 6;
+			pos = pos - buttonWidth * numOfButtons * 2;
 		}
 		var distance = pos - navbar.scrollLeft;
 		if (accel <= 0) {
@@ -218,7 +220,7 @@
 		
 	function loop_scroll() {
 		var navbar = document.getElementById('scroller');
-		var numOfButtons = Object.keys(navButtons).length
+		var numOfButtons = Object.keys(navButtons).length;
 		var buttonWidth = navbar.scrollWidth / (numOfButtons * 3);
 		var left_bound = 11;
 		var right_bound = buttonWidth * (numOfButtons * 2) - buttonWidth / 14;
@@ -249,7 +251,7 @@
 		const buttonWidth = navbar.scrollWidth / (numOfButtons * 3);
 		var currentButton = Math.floor(navbar.scrollLeft / buttonWidth);
 		var buttonDistance = buttonIndex - 1 - currentIndex;
-		var maxDistance = Math.floor(numOfButtons / 2);
+		var maxDistance = Math.floor(numOfButtons / (numOfButtons - 1));
 		
 		// logic to find the distance to the nearest button
 		// considering that the set of buttons are repeated infinitely on the right and left
@@ -357,9 +359,9 @@
 		if (pos == undefined) {
 			pos = navbar.scrollLeft;
 		}
-		const buttonWidth = navbar.scrollWidth / 9;
-		var currentButton = Math.floor(pos / buttonWidth);
 		const numOfButtons = Object.keys(navButtons).length;
+		const buttonWidth = navbar.scrollWidth / (numOfButtons * 3);
+		var currentButton = Math.floor(pos / buttonWidth);
 		return currentButton % numOfButtons;
 	}
 			
@@ -415,6 +417,12 @@
 				$("#threednav").find("li.active").children("a")[0].click();
 				if ($("#threedContainer").attr("data-inview") == "in" && $("#threedContainer .slideOut").text().trim() != "»") {
 					$("#threednav").slideToggle(750);
+				}
+			}
+			if (scrollType.hasClass("gamesButton")) {
+				$("#gamesnav").find("li.active").children("a")[0].click();
+				if ($("#gamesContainer").attr("data-inview") == "in" && $("#gamesContainer .slideOut").text().trim() != "»") {
+					$("#gamesnav").slideToggle(750);
 				}
 			}
 		}
@@ -552,15 +560,19 @@
 					<div class="photosButton" id="first"><button type="button">Photography</button></div>
 					<div class="musicButton" id="second"><button type="button">Music</button></div>
 					<div class="threedButton"><button type="button">3D Art</button></div>
+					<div class="gamesButton"><button type="button">Games</button></div>
 					<div class="photosButton" id="start"><button type="button">Photography</button></div>
 					<div class="musicButton"><button type="button">Music</button></div>
 					<div class="threedButton"><button type="button">3D Art</button></div>
+					<div class="gamesButton"><button type="button">Games</button></div>
 					<div class="photosButton"><button type="button">Photography</button></div>
 					<div class="musicButton"><button type="button">Music</button></div>
 					<div class="threedButton"><button type="button" id="last">3D Art</button></div>
+					<div class="gamesButton"><button type="button">Games</button></div>
 				</div>
 			<button type="button" onmouseover="scroll_right();" onmouseout="stop_scroll();" onClick="snap_nearest(1);" id="rightScroll">&gt;</button>
 		</div>
+		
 		<div class="content" id="aboutContainer" data-inview="in">
 		<div class="section" id="about">
 			<a name="about">
@@ -582,6 +594,7 @@
 			</a>
 		</div>
 	</div>
+	
 	<div class="content" id="photosContainer" data-inview="out">
 		<div class="sidePanel" id="photosnav">
 			<span class="slideOut">&laquo;</span>
@@ -605,6 +618,7 @@
 			</a>
 		</div>
 	</div>
+	
 	<div class="content" id="musicContainer" data-inview="out">
 		<div class="sidePanel" id="musicnav">
 			<span class="slideOut">&laquo;</span>
@@ -701,7 +715,34 @@
 				</a>
 		</div>
 	</div>
+	
+	<div class="content" id="gamesContainer" data-inview="out">
+		<div class="sidePanel" id="gamesnav">
+			<span class="slideOut">&laquo;</span>
+			<ul>
+				<li class="active"><a href="#shapes">Shape Wars</a></li>
+			</ul>
+		</div>
+		<div class="section" id="shapeWar">
+		<a name="shapes" target="_top">
+			<div class="Description">
+				<h1>Shape Wars</h1>
+				<strong>Play here: <a href="Games/ShapeWars/Assignment1.html">link</a></strong>
+				<p>You are a brave triangle whose mission is to destroy all the other shapes in your immediate vicinity. Gain score by shooting, dashing, and exploding your way to victory and see how long you can last in this simple survival game! Enemies are worth more points depending on the number of sides they have and the debris that fly off them are worth double! Be careful though as they will start spawning quicker the longer you survive. Using simple graphics and the raylib engine this game can be ran in browser using Webassembly or compiled to run directly on your computer as an executable. You can view the code here: <a href="https://github.com/EricBarrett/shape_wars/">https://github.com/EricBarrett/shape_wars/</a></p>
+			</div>
+			<div class="Instructions">
+				<h2>Controls:</h2>
+				WASD/arrow keys = Move<br>
+				Spacebar = Dash<br>
+				LMB = Shoot<br>
+				RMB = Bomb<br>
+				<i>*Don't blow yourself up with the bomb!*</i>
+			</div>
+		</a>
+		</div>
+	</div>
 </div>
+	
 	
 </body>
 </html>

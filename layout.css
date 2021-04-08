@@ -161,13 +161,13 @@ a[href]:active {
 
 .buttonContainer::-webkit-scrollbar { width: 0 }
 
-.photosButton, .musicButton, .threedButton {
+.photosButton, .musicButton, .threedButton, .gamesButton {
 	flex: 0 0 auto;
 	box-sizing: border-box;
 	position: relative;
 	text-decoration: none;
 	text-align: center;
-	width: 34%;
+	width: 25%;
 }
 
 .sidePanel {
@@ -353,6 +353,18 @@ a[href]:active {
 	height: auto;
 	width: 60%;
 }
+
+.Description {
+	text-align: center;
+}
+
+.Instructions {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
 
 .skin {
 	display: flex;
